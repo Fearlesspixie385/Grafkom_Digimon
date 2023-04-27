@@ -45,6 +45,7 @@ public class Object extends ShaderProgram {
         degreeInc = 0;
         Switch = 0;
 
+        centerPoint = Arrays.asList(0f,0f,0f);
         model = new Matrix4f();
         childObject = new ArrayList<>();
         setupVAOVBO();
