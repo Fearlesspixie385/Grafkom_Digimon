@@ -422,13 +422,20 @@ public class Palmon {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(1f,0.0f,0.0f,1.0f)
+                        new Vector4f(1f,0.0f,0.0f,1.0f), true
                 )
         );
-        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.0f, 0.5f, 0.0f));
-        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.125f, 0.15f, 0.0f));
-        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.25f, 0.5f, 0.0f));
-        objects.get(0).getChildObject().get(2).getChildObject().get(6).translateObject(0.0f,0.0f,-0.2f);
+//        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(-0.125f, 0.1f, 0.0f));
+//        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.0f, 0.0f, 0.0f));
+//        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.125f, 0.1f, 0.0f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(-0.125f, 0.1f, 0.03f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(-0.08f, 0.05f, 0.0f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(-0.04f, 0.075f, 0.0f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.0f, 0.12f, 0.0f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.04f, 0.075f, 0.0f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.08f, 0.05f, 0.0f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.125f, 0.1f, 0.03f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).translateObject(0f,-0f,-0.17f);
 
         //Kaki
         objects.get(0).getChildObject().add(new Sphere2(

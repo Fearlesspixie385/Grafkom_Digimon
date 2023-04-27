@@ -447,21 +447,42 @@ public class main {
         objects.get(0).getChildObject().get(2).getChildObject().get(5).translateObject(0.0f,0.5f,0.0f);
 
         //Mulut
-        objects.get(0).getChildObject().get(2).getChildObject().add(new kerucut(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
+//        objects.get(0).getChildObject().get(2).getChildObject().add(new kerucut(
+//                Arrays.asList(
+//                        //shaderFile lokasi menyesuaikan objectnya
+//                        new ShaderProgram.ShaderModuleData
+//                                ("resources/shaders/scene.vert"
+//                                        , GL_VERTEX_SHADER),
+//                        new ShaderProgram.ShaderModuleData
+//                                ("resources/shaders/scene.frag"
+//                                        , GL_FRAGMENT_SHADER)
+//                ),
+//                new ArrayList<>(),
+//                new Vector4f(0.960f, 0.528f, 0.535f, 1f), 0.0f, 0.0f, 0.025f, 0.005f, 0.01f
+//        ));
+//        objects.get(0).getChildObject().get(2).getChildObject().get(6).rotateObject((float)Math.toRadians(-180),0f,0f,1f);
+//        objects.get(0).getChildObject().get(2).getChildObject().get(6).translateObject(0.0f,0.06f,-0.185f);
+        objects.get(0).getChildObject().get(2).getChildObject().add(new Curve(
+                        Arrays.asList(
+                                new ShaderProgram.ShaderModuleData(
+                                        "resources/shaders/scene.vert"
                                         , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
+                                new ShaderProgram.ShaderModuleData(
+                                        "resources/shaders/scene.frag"
                                         , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(0.960f, 0.528f, 0.535f, 1f), 0.0f, 0.0f, 0.025f, 0.005f, 0.01f
-        ));
-        objects.get(0).getChildObject().get(2).getChildObject().get(6).rotateObject((float)Math.toRadians(-180),0f,0f,1f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(6).translateObject(0.0f,0.06f,-0.185f);
+                        ),
+                        new ArrayList<>(),
+                        new Vector4f(0f,0.0f,0.0f,1.0f), true
+                )
+        );
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(-0.125f, 0.1f, 0.03f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(-0.08f, 0.05f, 0.0f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(-0.04f, 0.075f, 0.0f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.0f, 0.12f, 0.0f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.04f, 0.075f, 0.0f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.08f, 0.05f, 0.0f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.125f, 0.1f, 0.03f));
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).translateObject(0f,-0f,-0.17f);
 
         //Kaki
         objects.get(0).getChildObject().add(new Sphere2(
