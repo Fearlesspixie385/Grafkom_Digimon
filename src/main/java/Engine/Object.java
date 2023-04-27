@@ -24,6 +24,7 @@ public class Object extends ShaderProgram {
     float degreeInc;
     int Switch;
     public List<Float> getCenterPoint() {
+        updateCenterPoint();
         return centerPoint;
     }
     public void setCenterPoint(List<Float> centerPoint) {
