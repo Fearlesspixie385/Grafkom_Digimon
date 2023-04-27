@@ -3,7 +3,12 @@ package Engine;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_POLYGON;
+
 
 public class Curve extends Object {
 
@@ -105,3 +110,4 @@ public class Curve extends Object {
         }
     }
 }
+
