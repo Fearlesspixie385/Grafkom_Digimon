@@ -22,7 +22,6 @@ public class mou {
     private ArrayList<Object> objectPointControl = new ArrayList<>();
     private ArrayList<Object> objectPointCurve = new ArrayList<>();
     private boolean dragDrop = false;
-    private int var = -1;
     private float posX = 0.0f;
     private float posY = 0.0f;
     private float posZ = 2.0f;
@@ -30,43 +29,25 @@ public class mou {
     private Object lowerBody;
     private Object upperBody;
     private Object head;
+    private Object jointHead;
     private Object eyeRight; //from char perspective
     private Object eyeLeft;
-    private Object armLeft;
-    private Object armRight;
-    private Object handLeft;
-    private Object handRight;
-    private Object mouth;
-    private Object nose;
-    private Object legRight;
-    private Object legLeft;
-    private Object earRight;
-    private Object earLeft;
-    private float value = 0;
-    private boolean state = true;
-    private boolean state2 = true;
-    private float limitXKiri = 1;
-    private float limitXKanan = 1;
-    private float limitYBawah = 1;
-    private float limitYAtas = 1;
-    float total = 0;
+    private Object jointArmLeft;
+    private Object jointArmRight;
+    private Object jointHandLeft;
+    private Object jointHandRight;
+    private Object jointLegLeft;
+    private Object jointLegRight;
+    private Object jointFootLeft;
+    private Object jointFootRight;
+
+    private ArrayList<Double> valueArray = new ArrayList<>();
+    private ArrayList<Boolean> stateArray = new ArrayList<>();
 
 
     public static void main(String[] args) {
-
         new main().run();
-
     }
-
-    public Vector2f convertRange(Vector2f pos, float height, float width) {
-        float OldMax = 255, OldMin = 0, NewMax = 1, NewMin = 0, OldValue = 208, NewRange, NewValue, OldRange;
-        OldRange = (OldMax - OldMin);
-        NewRange = (NewMax - NewMin);
-        NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin;
-        System.out.println(NewValue);
-        return new Vector2f((((pos.x - 0) * (1 - (-1))) / (width - 0) + (-1)), (((pos.y - 0) * (1 - (-1))) / (height - 0) + (-1)) * -1);
-    }
-
 
     public void init() {
         window.init();
@@ -90,10 +71,11 @@ public class mou {
                 new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.13f, 0.13f, 0.07f, 0
         ));
         lowerBody = objects.get(0);
+        int intlowerBody = 0;
 
 
         //upper body
-        objects.get(0).getChildObject().add(new Sphere3(
+        lowerBody.getChildObject().add(new Sphere3(
                 Arrays.asList(
                         //shaderFile lokasi menyesuaikan objectnya
                         new ShaderProgram.ShaderModuleData
@@ -106,14 +88,38 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.13f, 0.13f, 0.158f, 0
         ));
-        upperBody = objects.get(0).getChildObject().get(0);
+        upperBody = lowerBody.getChildObject().get(intlowerBody);
+        int intupperBody = 0;
+        intlowerBody++;
 
         upperBody.rotateObject((float) Math.toRadians(180f), 0.0f, 0.0f, 1.0f);
         upperBody.translateObject(0f, 0.565f, 0.0f);
 
+        //joint Head
+        upperBody.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0f, 1f, 1f, 0f), 0.0f, 0.0f, 0.2f, 0.2f, 0.15f
+        ));
+
+        jointHead = upperBody.getChildObject().get(intupperBody);
+        int intjointHead = 0;
+        intupperBody++;
+
+        jointHead.scaleObject(0.1f, 0.1f, 0.1f);
+        Vector3f tempCenterPoint = upperBody.updateCenterPointObject();
+        jointHead.translateObject(0f, tempCenterPoint.y - 0.13f, 0.0f);
 
         //head
-        upperBody.getChildObject().add(new Sphere3(
+        jointHead.getChildObject().add(new Sphere3(
                 Arrays.asList(
                         //shaderFile lokasi menyesuaikan objectnya
                         new ShaderProgram.ShaderModuleData
@@ -126,10 +132,13 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.2f, 0.2f, 0.15f
         ));
-        head = upperBody.getChildObject().get(0);
+        head = jointHead.getChildObject().get(intjointHead);
+        int inthead = 0;
+        intjointHead++;
 
+        tempCenterPoint = jointHead.updateCenterPointObject();
         head.scaleObject(0.5f, 0.5f, 0.5f);
-        head.translateObject(0f, 0.7f, 0.0f);
+        head.translateObject(0f, tempCenterPoint.y + 0.27f, 0.0f);
 
 
         //eye right
@@ -146,11 +155,11 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(0.09f, 0.58f, 0.81f, 0f), 0.0f, 0.0f, 0.03f
         ));
-        eyeRight = head.getChildObject().get(0);
+        eyeRight = head.getChildObject().get(inthead);
+        inthead++;
 
 
         eyeRight.rotateObject((float) Math.toRadians(-24f), 0f, 1f, 0f);
-        Vector3f tempCenterPoint = upperBody.updateCenterPointObject();
         tempCenterPoint = head.updateCenterPointObject();
         eyeRight.translateObject(tempCenterPoint.x - 0.1f, tempCenterPoint.y, tempCenterPoint.z + 0.229f);
 
@@ -169,7 +178,8 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(0.09f, 0.58f, 0.81f, 0f), 0.0f, 0.0f, 0.03f
         ));
-        eyeLeft = head.getChildObject().get(1);
+        eyeLeft = head.getChildObject().get(inthead);
+        inthead++;
 
         eyeLeft.rotateObject((float) Math.toRadians(24f), 0f, 1f, 0f);
         tempCenterPoint = head.updateCenterPointObject();
@@ -177,8 +187,10 @@ public class mou {
 
         //head(2)
         eyeRightDecor();
+        inthead++;
         //head(3)
         eyeLeftDecor();
+        inthead++;
 
         //nose
         head.getChildObject().add(new Sphere3(
@@ -194,7 +206,9 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(0f, 0f, 0f, 0f), 0.0f, 0.0f, 0.02f, 0.01f, 0.01f, 1
         ));
-        nose = head.getChildObject().get(4);
+        Object nose = head.getChildObject().get(inthead);
+        inthead++;
+
         nose.rotateObject((float) Math.toRadians(15f), 0.0f, 0.0f, 1.f);
         nose.translateObject(tempCenterPoint.x + 0.005f, tempCenterPoint.y - 0.05f, tempCenterPoint.z + 0.24f);
 
@@ -211,223 +225,10 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(0f, 0f, 0f, 0f), 0.0f, 0.0f, 0.02f, 0.01f, 0.01f, 1
         ));
-        head.getChildObject().get(5).rotateObject((float) Math.toRadians(-15f), 0.0f, 0.0f, 1.f);
-        head.getChildObject().get(5).translateObject(tempCenterPoint.x - 0.005f, tempCenterPoint.y - 0.05f, tempCenterPoint.z + 0.24f);
 
-
-        //joint upper body arm
-        upperBody.getChildObject().add(new Sphere3(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
-        ));
-
-        Object jointArmLeft = upperBody.getChildObject().get(1);
-
-        jointArmLeft.scaleObject(0.06f, 0.06f, 0.06f);
-        tempCenterPoint = upperBody.updateCenterPointObject();
-        jointArmLeft.translateObject(tempCenterPoint.x + 0.1f, tempCenterPoint.y - 0.11f, tempCenterPoint.z);
-
-        upperBody.getChildObject().add(new Sphere3(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
-        ));
-
-        Object jointArmRight = upperBody.getChildObject().get(2);
-
-        jointArmRight.scaleObject(0.06f, 0.06f, 0.06f);
-        tempCenterPoint = upperBody.updateCenterPointObject();
-        jointArmRight.translateObject(tempCenterPoint.x - 0.1f, tempCenterPoint.y - 0.11f, tempCenterPoint.z);
-
-
-        //arm right
-        jointArmRight.getChildObject().add(new Tube(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.03f, 0.2f
-        ));
-        armRight = jointArmRight.getChildObject().get(0);
-
-        tempCenterPoint = jointArmRight.updateCenterPointObject();
-        armRight.rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
-        armRight.translateObject(tempCenterPoint.x - 0.1f, tempCenterPoint.y, tempCenterPoint.z);
-
-
-        //joint arm right hand
-        armRight.getChildObject().add(new Sphere3(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
-        ));
-        Object jointHandRight = armRight.getChildObject().get(0);
-
-        jointHandRight.scaleObject(0.06f, 0.06f, 0.06f);
-
-        tempCenterPoint = armRight.updateCenterPointObject();
-        jointHandRight.translateObject(tempCenterPoint.x - 0.094f, tempCenterPoint.y, tempCenterPoint.z);
-
-        handRight(jointHandRight);
-
-
-        //arm left
-        jointArmLeft.getChildObject().add(new Tube(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.03f, 0.2f
-        ));
-        armLeft = jointArmLeft.getChildObject().get(0);
-
-        armLeft.rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
-        tempCenterPoint = jointArmLeft.updateCenterPointObject();
-        armLeft.translateObject(tempCenterPoint.x + 0.1f, tempCenterPoint.y, tempCenterPoint.z);
-
-
-        //joint arm left hand
-        armLeft.getChildObject().add(new Sphere3(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
-        ));
-        Object jointHandLeft = armLeft.getChildObject().get(0);
-
-        jointHandLeft.scaleObject(0.06f, 0.06f, 0.06f);
-
-        tempCenterPoint = armLeft.updateCenterPointObject();
-        jointHandLeft.translateObject(tempCenterPoint.x + 0.094f, tempCenterPoint.y, tempCenterPoint.z);
-
-        handLeft(jointHandLeft);
-
-
-        //legRight
-        lowerBody.getChildObject().add(new Tube(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.05f, 0.2f
-        ));
-        legRight = lowerBody.getChildObject().get(1);
-
-        tempCenterPoint = lowerBody.updateCenterPointObject();
-        legRight.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
-        legRight.translateObject(tempCenterPoint.x - 0.07f, tempCenterPoint.y, tempCenterPoint.z);
-
-
-        //foot right
-        legRight.getChildObject().add(new Tube(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.09f, 0.03f
-        ));
-
-        tempCenterPoint = legRight.updateCenterPointObject();
-        legRight.getChildObject().get(0).rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
-        legRight.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y - 0.1f, tempCenterPoint.z + 0.033f);
-
-
-        //legLeft
-        lowerBody.getChildObject().add(new Tube(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.05f, 0.2f
-        ));
-        legLeft = lowerBody.getChildObject().get(2);
-
-        tempCenterPoint = lowerBody.updateCenterPointObject();
-        legLeft.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
-        legLeft.translateObject(tempCenterPoint.x + 0.07f, tempCenterPoint.y, tempCenterPoint.z);
-
-
-        //foot right
-        legLeft.getChildObject().add(new Tube(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.09f, 0.03f
-        ));
-
-        tempCenterPoint = legLeft.updateCenterPointObject();
-        legLeft.getChildObject().get(0).rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
-        legLeft.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y - 0.1f, tempCenterPoint.z + 0.033f);
-
+        head.getChildObject().get(inthead).rotateObject((float) Math.toRadians(-15f), 0.0f, 0.0f, 1.f);
+        head.getChildObject().get(inthead).translateObject(tempCenterPoint.x - 0.005f, tempCenterPoint.y - 0.05f, tempCenterPoint.z + 0.24f);
+        inthead++;
 
         //earRight
         head.getChildObject().add(new Sphere3(
@@ -443,7 +244,8 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.015f, 0.004f, 0.04f, 2
         ));
-        earRight = head.getChildObject().get(6);
+        Object earRight = head.getChildObject().get(inthead);
+        inthead++;
 
         tempCenterPoint = head.updateCenterPointObject();
         earRight.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
@@ -486,7 +288,8 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.015f, 0.004f, 0.04f, 2
         ));
-        earLeft = head.getChildObject().get(7);
+        Object earLeft = head.getChildObject().get(inthead);
+        inthead++;
 
         tempCenterPoint = head.updateCenterPointObject();
         earLeft.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
@@ -509,22 +312,15 @@ public class mou {
                 new Vector4f(0.93333334f, 0.77254903f, 0.81960785f, 0f), 0.0f, 0.0f, 0.015f / 1.5f, 0.004f / 1.5f, 0.04f / 1.5f, 2
         ));
 
+        tempCenterPoint = earLeft.updateCenterPointObject();
+        earLeft.getChildObject().get(0).rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
+        earLeft.getChildObject().get(0).rotateObject((float) Math.toRadians(-30f), 0f, 0f, 1f);
+        earLeft.getChildObject().get(0).translateObject(tempCenterPoint.x - 0.024f, tempCenterPoint.y - 0.05f, tempCenterPoint.z + 0.01f);
 
-        //mouth
-        head.getChildObject().add(new Object(
-                Arrays.asList(
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(0.0f, 1.0f, 1.0f, 1.0f)
-        ));
 
-        objectPointCurve.add(new Object(
+        //mouth right
+        objectPointControl.clear();
+        objectPointControl.add(new Object(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData
                                 ("resources/shaders/scene.vert"
@@ -536,21 +332,556 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
         ));
-        mouth = head.getChildObject().get(8);
+
+        head.getChildObject().add(new Curve2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.0f, 0.0f, 0.0f, 1.0f), 3
+        ));
+        Object mouthLeft = head.getChildObject().get(inthead);
+        inthead++;
+
         tempCenterPoint = head.updateCenterPointObject();
-        mouth.addVertices(new Vector3f(tempCenterPoint.x - 1, tempCenterPoint.y + 1, tempCenterPoint.z + 1f));
-        mouth.addVertices(new Vector3f(tempCenterPoint.x - 0.5f, tempCenterPoint.y - 1, tempCenterPoint.z + 1f));
-        mouth.addVertices(new Vector3f(tempCenterPoint.x - 0.5f, tempCenterPoint.y - 1, tempCenterPoint.z + 1f));
-        mouth.addVertices(new Vector3f(tempCenterPoint.x, tempCenterPoint.y, tempCenterPoint.z + 1f));
-        mouth.bezierCurve(objectPointCurve.get(0));
+        float move1 = 0.02f;
+        float move2 = 0.1f;
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.02f - move1, tempCenterPoint.y + 0.015f - move2, tempCenterPoint.z + 0.232f));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.014f - move1, tempCenterPoint.y - 0.0001f - move2, tempCenterPoint.z + 0.228f));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.007f - move1, tempCenterPoint.y - 0.0001f - move2, tempCenterPoint.z + 0.232f));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.02f - move1, tempCenterPoint.y + 0.015f - move2, tempCenterPoint.z + 0.235f));
+
+        objectPointControl.get(0).bezierCurve(mouthLeft);
+
+
+        //mouth left
+        objectPointControl.clear();
+        objectPointControl.add(new Object(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
+        ));
+
+        head.getChildObject().add(new Curve2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.0f, 0.0f, 0.0f, 1.0f), 3
+        ));
+        Object mouthRight = head.getChildObject().get(inthead);
+        inthead++;
+
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.02f + move1, tempCenterPoint.y + 0.015f - move2, tempCenterPoint.z + 0.235f));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.007f + move1, tempCenterPoint.y - 0.0001f - move2, tempCenterPoint.z + 0.232f));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.014f + move1, tempCenterPoint.y - 0.0001f - move2, tempCenterPoint.z + 0.228f));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.02f + move1, tempCenterPoint.y + 0.015f - move2, tempCenterPoint.z + 0.232f));
+
+        objectPointControl.get(0).bezierCurve(mouthRight);
+
+
+        //whisker left up
+        objectPointControl.clear();
+        objectPointControl.add(new Object(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
+        ));
+
+        head.getChildObject().add(new Curve2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.0f, 0.0f, 0.0f, 1.0f), 1
+        ));
+        Object whiskerLeftUp = head.getChildObject().get(inthead);
+        inthead++;
+
+        move1 = 0.3f;
+        move2 = 0.1f;
+        float move3 = 0.2f;
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.08f - move1, tempCenterPoint.y - 0.005f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.053f - move1, tempCenterPoint.y + 0.011f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.05f - move1, tempCenterPoint.y + 0.011f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.08f - move1, tempCenterPoint.y - 0.005f - move2, tempCenterPoint.z + move3));
+
+        objectPointControl.get(0).bezierCurve(whiskerLeftUp);
+        tempCenterPoint = whiskerLeftUp.updateCenterPointObject();
+        whiskerLeftUp.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+        whiskerLeftUp.rotateObject((float) Math.toRadians(-10f), 0f, 0f, 1f);
+        whiskerLeftUp.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+
+
+        //whisker right up
+        objectPointControl.clear();
+        objectPointControl.add(new Object(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
+        ));
+
+        head.getChildObject().add(new Curve2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.0f, 0.0f, 0.0f, 1.0f), 1
+        ));
+        Object whiskerRightUp = head.getChildObject().get(inthead);
+        inthead++;
+
+        move1 = -move1;
+
+        tempCenterPoint = head.updateCenterPointObject();
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.08f - move1, tempCenterPoint.y - 0.005f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.05f - move1, tempCenterPoint.y + 0.011f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.053f - move1, tempCenterPoint.y + 0.011f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.08f - move1, tempCenterPoint.y - 0.005f - move2, tempCenterPoint.z + move3));
+
+        objectPointControl.get(0).bezierCurve(whiskerRightUp);
+        tempCenterPoint = whiskerRightUp.updateCenterPointObject();
+        whiskerRightUp.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+        whiskerRightUp.rotateObject((float) Math.toRadians(10f), 0f, 0f, 1f);
+        whiskerRightUp.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+
+
+        //whisker left down
+        objectPointControl.clear();
+        objectPointControl.add(new Object(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
+        ));
+
+        head.getChildObject().add(new Curve2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.0f, 0.0f, 0.0f, 1.0f), 1
+        ));
+        Object whiskerLeftDown = head.getChildObject().get(inthead);
+        inthead++;
+
+        move1 = -move1 - 0.15f;
+        move2 += -0.023f;
+        move3 += -0.01f;
+
+        tempCenterPoint = head.updateCenterPointObject();
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.08f - move1, tempCenterPoint.y - 0.005f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.05f - move1, tempCenterPoint.y + 0.011f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.053f - move1, tempCenterPoint.y + 0.011f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.08f - move1, tempCenterPoint.y - 0.005f - move2, tempCenterPoint.z + move3));
+
+        objectPointControl.get(0).bezierCurve(whiskerLeftDown);
+        tempCenterPoint = whiskerLeftDown.updateCenterPointObject();
+        whiskerLeftDown.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+        whiskerLeftDown.rotateObject((float) Math.toRadians(3f), 0f, 0f, 1f);
+        whiskerLeftDown.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+
+
+        //whisker right down
+        objectPointControl.clear();
+        objectPointControl.add(new Object(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
+        ));
+
+        head.getChildObject().add(new Curve2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.0f, 0.0f, 0.0f, 1.0f), 1
+        ));
+        Object whiskerRightDown = head.getChildObject().get(inthead);
+        inthead++;
+
+        move1 = -move1;
+
+        tempCenterPoint = head.updateCenterPointObject();
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.08f - move1, tempCenterPoint.y - 0.005f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.05f - move1, tempCenterPoint.y + 0.011f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.053f - move1, tempCenterPoint.y + 0.011f - move2, tempCenterPoint.z + move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.08f - move1, tempCenterPoint.y - 0.005f - move2, tempCenterPoint.z + move3));
+
+        objectPointControl.get(0).bezierCurve(whiskerRightDown);
+
+        tempCenterPoint = whiskerRightDown.updateCenterPointObject();
+        whiskerRightDown.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+        whiskerRightDown.rotateObject((float) Math.toRadians(-3f), 0f, 0f, 1f);
+        whiskerRightDown.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+
+        //joint upper body arm
+        upperBody.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
+        ));
+
+        jointArmLeft = upperBody.getChildObject().get(1);
+
+        jointArmLeft.scaleObject(0.06f, 0.06f, 0.06f);
+        tempCenterPoint = upperBody.updateCenterPointObject();
+        jointArmLeft.translateObject(tempCenterPoint.x + 0.1f, tempCenterPoint.y - 0.11f, tempCenterPoint.z);
+
+        upperBody.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
+        ));
+
+        jointArmRight = upperBody.getChildObject().get(2);
+
+        jointArmRight.scaleObject(0.06f, 0.06f, 0.06f);
+        tempCenterPoint = upperBody.updateCenterPointObject();
+        jointArmRight.translateObject(tempCenterPoint.x - 0.1f, tempCenterPoint.y - 0.11f, tempCenterPoint.z);
+
+
+        //arm right
+        jointArmRight.getChildObject().add(new Tube(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.03f, 0.2f
+        ));
+        Object armRight = jointArmRight.getChildObject().get(0);
+
+        tempCenterPoint = jointArmRight.updateCenterPointObject();
+        armRight.rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
+        armRight.translateObject(tempCenterPoint.x - 0.1f, tempCenterPoint.y, tempCenterPoint.z);
+
+
+        //joint arm right hand
+        armRight.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
+        ));
+        jointHandRight = armRight.getChildObject().get(0);
+
+        jointHandRight.scaleObject(0.06f, 0.06f, 0.06f);
+
+        tempCenterPoint = armRight.updateCenterPointObject();
+        jointHandRight.translateObject(tempCenterPoint.x - 0.094f, tempCenterPoint.y, tempCenterPoint.z);
+
+        handRight();
+
+        //arm left
+        jointArmLeft.getChildObject().add(new Tube(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.03f, 0.2f
+        ));
+        Object armLeft = jointArmLeft.getChildObject().get(0);
+
+        armLeft.rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
+        tempCenterPoint = jointArmLeft.updateCenterPointObject();
+        armLeft.translateObject(tempCenterPoint.x + 0.1f, tempCenterPoint.y, tempCenterPoint.z);
+
+
+        //joint arm left hand
+        armLeft.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.788f, 0.815f, 0.305f, 0f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
+        ));
+        jointHandLeft = armLeft.getChildObject().get(0);
+
+        jointHandLeft.scaleObject(0.04f, 0.04f, 0.04f);
+
+        tempCenterPoint = armLeft.updateCenterPointObject();
+        jointHandLeft.translateObject(tempCenterPoint.x + 0.094f, tempCenterPoint.y, tempCenterPoint.z);
+
+        handLeft();
+
+
+        //joint leg right
+        lowerBody.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1, 1, 1, 1f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
+        ));jointLegRight = lowerBody.getChildObject().get(intlowerBody);
+        intlowerBody++;
+
+        tempCenterPoint = lowerBody.updateCenterPointObject();
+        jointLegRight.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
+        jointLegRight.scaleObject(0.1f, 0.1f, 0.1f);
+        jointLegRight.translateObject(tempCenterPoint.x - 0.1f, tempCenterPoint.y + 0.09f, tempCenterPoint.z);
+
+
+        //legRight
+        jointLegRight.getChildObject().add(new Tube(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.05f, 0.2f
+        ));
+        Object legRight = jointLegRight.getChildObject().get(0);
+
+        tempCenterPoint = jointLegRight.updateCenterPointObject();
+        legRight.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
+        legRight.translateObject(tempCenterPoint.x, tempCenterPoint.y - 0.09f, tempCenterPoint.z);
+
+
+        //joint foot right
+        legRight.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1, 1, 1, 1f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
+        ));jointFootRight = legRight.getChildObject().get(0);
+
+        tempCenterPoint = legRight.updateCenterPointObject();
+
+        jointFootRight.scaleObject(0.1f, 0.1f, 0.1f);
+        jointFootRight.translateObject(tempCenterPoint.x, tempCenterPoint.y - 0.1f, tempCenterPoint.z);
+
+
+        //foot right
+        jointFootRight.getChildObject().add(new Tube(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.09f, 0.04f
+        ));
+
+
+        tempCenterPoint = jointFootRight.updateCenterPointObject();
+        jointFootRight.getChildObject().get(0).rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
+        jointFootRight.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y -0.03f, tempCenterPoint.z + 0.033f);
+
+
+        //joint leg left
+        lowerBody.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1, 1, 1, 1f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
+        ));jointLegLeft = lowerBody.getChildObject().get(intlowerBody);
+        intlowerBody++;
+
+        tempCenterPoint = lowerBody.updateCenterPointObject();
+        jointLegLeft.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
+        jointLegLeft.scaleObject(0.1f, 0.1f, 0.1f);
+        jointLegLeft.translateObject(tempCenterPoint.x + 0.1f, tempCenterPoint.y + 0.09f, tempCenterPoint.z);
+
+
+        //legLeft
+        jointLegLeft.getChildObject().add(new Tube(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.05f, 0.2f
+        ));
+        Object legLeft = jointLegLeft.getChildObject().get(0);
+
+
+        tempCenterPoint = jointLegLeft.updateCenterPointObject();
+        legLeft.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
+        legLeft.translateObject(tempCenterPoint.x, tempCenterPoint.y - 0.09f, tempCenterPoint.z);
+
+
+        //joint foot left
+        legLeft.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1, 1, 1, 1f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
+        ));jointFootLeft = legLeft.getChildObject().get(0);
+
+        tempCenterPoint = legLeft.updateCenterPointObject();
+
+        jointFootLeft.scaleObject(0.1f, 0.1f, 0.1f);
+        jointFootLeft.translateObject(tempCenterPoint.x, tempCenterPoint.y - 0.1f, tempCenterPoint.z);
+
+
+        //foot left
+        jointFootLeft.getChildObject().add(new Tube(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.09f, 0.04f
+        ));
+
+
+        tempCenterPoint = jointFootLeft.updateCenterPointObject();
+        jointFootLeft.getChildObject().get(0).rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
+        jointFootLeft.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y -0.03f, tempCenterPoint.z + 0.033f);
 
 
 
-
-        tempCenterPoint = earLeft.updateCenterPointObject();
-        earLeft.getChildObject().get(0).rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
-        earLeft.getChildObject().get(0).rotateObject((float) Math.toRadians(-30f), 0f, 0f, 1f);
-        earLeft.getChildObject().get(0).translateObject(tempCenterPoint.x - 0.024f, tempCenterPoint.y - 0.05f, tempCenterPoint.z + 0.01f);
 
 
         tempCenterPoint = jointArmRight.updateCenterPointObject();
@@ -562,121 +893,173 @@ public class mou {
         jointArmLeft.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
         jointArmLeft.rotateObject((float) Math.toRadians(-55f), 0f, 0f, 1f);
         jointArmLeft.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+
         lowerBody.translateObject(0f, -0.2f, 0f);
+
+
+        for (int i = 0; i < 3; i++) {
+            valueArray.add(0.0);
+        }
+
+        for (int i = 0; i < 6; i++) {
+            stateArray.add(true);
+        }
+
+        objectPointControl.clear();
+
+
     }
 
     public void input() {
+        class Rotate {
+            private void x (Object object, float rotate) {
+                Vector3f tempCenterPoint = object.updateCenterPointObject();
+                object.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+                object.rotateObjectAnimate((float) Math.toRadians(rotate), 1f, 0f, 0f, camera, projection);
+                object.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+            }
 
+            private void y (Object object, float rotate) {
+                Vector3f tempCenterPoint = object.updateCenterPointObject();
+                object.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+                object.rotateObjectAnimate((float) Math.toRadians(rotate), 0f, 1f, 0f, camera, projection);
+                object.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+            }
 
-//        if (window.isKeyPressed(GLFW_KEY_W)) {
-//            System.out.println("W");
-//        }
+            private void z (Object object, float rotate) {
+                Vector3f tempCenterPoint = object.updateCenterPointObject();
+                object.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+                object.rotateObjectAnimate((float) Math.toRadians(rotate), 0f, 0f, 1f, camera, projection);
+                object.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+            }
+        }
+        Rotate rotate1 = new Rotate();
 
-
-//        if (window.getMousInput().isLeftButtonPressed()) {
-//            Vector2f pos = window.getMousInput().getCurrentPos();
-//
-//            pos.x = (pos.x - (window.getWidth()) / 2.0f) / (window.getWidth() / 2.0f);
-//
-//            pos.y = (pos.y - (window.getWidth()) / 2.0f) / (-window.getHeight() / 2.0f);
-//
-//            if ((!(pos.x > 1 || pos.x < -0.97) && !(pos.y > 0.97 || pos.y < -1))) {
-//                System.out.println("x : " + pos.x + " y : " + pos.y);
-//                objectPointControl.get(0).addVertices(new Vector3f(pos.x, pos.y, 0));
-//            }
-//        }
-
-        float x = 0.0005f;
-        float y = 0.0003f;
+        // value 0 state 0 1 head right left
         if (window.isKeyPressed(GLFW_KEY_P)) {
-            if (state2) {
-                if (value < 45 && state) {
-                    Vector3f tempCenterPoint = head.updateCenterPointObject();
-                    head.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
-                    head.rotateObject((float) Math.toRadians(0.5f), 0f, 0f, 1f);
-                    head.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
-                    value++;
-                    head.translateObject(-x, -y, 0f);
-                    System.out.println(value);
+            if (stateArray.get(1)) {
+                if (valueArray.get(0) < 30 && stateArray.get(0)) {
+                    rotate1.z(jointHead, 0.2f);
+                    valueArray.set(0, valueArray.get(0) + 1);
+
                 } else {
-                    state = false;
-                    Vector3f tempCenterPoint = head.updateCenterPointObject();
-                    head.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
-                    head.rotateObject((float) Math.toRadians(-0.5f), 0f, 0f, 1f);
-                    head.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
-                    head.translateObject(x, y, 0f);
-                    value--;
+                    stateArray.set(0, false);
+                    rotate1.z(jointHead, -0.2f);
+                    valueArray.set(0, valueArray.get(0) - 1);
                 }
 
-                if (value == 0) {
-                    state = true;
-                    state2 = false;
+                if (valueArray.get(0) == 0) {
+                    stateArray.set(0, true);
+                    stateArray.set(1, false);
                 }
             } else {
-                if (value > -45 && state) {
-                    Vector3f tempCenterPoint = head.updateCenterPointObject();
-                    head.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
-                    head.rotateObject((float) Math.toRadians(-0.5f), 0f, 0f, 1f);
-                    head.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
-                    head.translateObject(x, -y, 0f);
-                    value--;
-
-                    System.out.println(value);
+                if (valueArray.get(0) > -30 && stateArray.get(0)) {
+                    rotate1.z(jointHead, -0.2f);
+                    valueArray.set(0, valueArray.get(0) - 1);
                 } else {
-                    state = false;
-                    Vector3f tempCenterPoint = head.updateCenterPointObject();
-                    head.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
-                    head.rotateObject((float) Math.toRadians(0.5f), 0f, 0f, 1f);
-                    head.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
-                    value++;
-                    head.translateObject(-x, y, 0f);
+                    stateArray.set(0, false);
+                    new Rotate().z(jointHead, 0.2f);
+                    valueArray.set(0, valueArray.get(0) + 1);
                 }
 
-                if (value == 0) {
-                    state = true;
-                    state2 = true;
+                if (valueArray.get(0) == 0) {
+                    stateArray.set(0, true);
+                    stateArray.set(1, true);
                 }
             }
         }
-        if (window.isKeyPressed(GLFW_KEY_O)) {
 
-        }
 
+        // value 1 state 2 3 walk
         if (window.isKeyPressed(GLFW_KEY_Q)) {
-            for (int i = 0; i <= 90; i++) {
-                lowerBody.translateObject(0f, -0.1f, -0.1f);
+            float move = 1;
+            float move1 = move/2;
+            if (stateArray.get(3)) {
+                if (valueArray.get(1) < 30 && stateArray.get(2)) {
+                    rotate1.x(jointArmRight, -move);
+                    rotate1.x(jointHandRight, -move1);
+                    rotate1.x(jointArmLeft, move);
 
+                    rotate1.x(jointLegRight, move);
+                    rotate1.x(jointFootRight, -move);
+                    rotate1.x(jointLegLeft, -move);
+                    rotate1.x(jointFootLeft, move);
+                    valueArray.set(1, valueArray.get(1) + move);
 
-                Vector3f tempCenterPoint = legLeft.updateCenterPointObject();
-                legLeft.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
-                legLeft.rotateObject((float) Math.toRadians(0.5f), 1f, 0f, 0f);
-                legLeft.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+                } else {
+                    stateArray.set(2, false);
+                    rotate1.x(jointArmRight, move);
+                    rotate1.x(jointHandRight, move1);
+                    rotate1.x(jointArmLeft, -move);
 
-                legLeft.translateObject(0f, 0.1f, 0.1f);
+                    rotate1.x(jointLegRight, -move);
+                    rotate1.x(jointFootRight, move);
+                    rotate1.x(jointLegLeft, move);
+                    rotate1.x(jointFootLeft, -move);
+                    valueArray.set(1, valueArray.get(1) - move);
+                }
 
+                if (valueArray.get(1) == 0) {
+                    stateArray.set(2, true);
+                    stateArray.set(3, false);
+                }
+            } else {
+                if (valueArray.get(1) > -30 && stateArray.get(2)) {
+                    rotate1.x(jointArmRight, move);
+                    rotate1.x(jointArmLeft, -move);
+                    rotate1.x(jointHandLeft, -move1);
+
+                    rotate1.x(jointLegRight, -move);
+                    rotate1.x(jointFootRight, move);
+                    rotate1.x(jointLegLeft, move);
+                    rotate1.x(jointFootLeft, -move);
+                    valueArray.set(1, valueArray.get(1) - move);
+                } else {
+                    stateArray.set(2, false);
+                    rotate1.x(jointArmRight, -move);
+                    rotate1.x(jointArmLeft, move);
+                    rotate1.x(jointHandLeft, move1);
+
+                    rotate1.x(jointLegRight, move);
+                    rotate1.x(jointFootRight, -move);
+                    rotate1.x(jointLegLeft, -move);
+                    rotate1.x(jointFootLeft, move);
+                    valueArray.set(1, valueArray.get(1) + move);
+                }
+
+                if (valueArray.get(1) == 0) {
+                    stateArray.set(2, true);
+                    stateArray.set(3, true);
+                }
             }
-
         }
-        float rotate = 0.01f;
+
+
+        if (window.isKeyPressed(GLFW_KEY_R)) {
+            lowerBody.resetPosChildren();
+            valueArray.replaceAll(Integer -> 0.0);
+            stateArray.replaceAll(Boolean -> true);
+        }
+
+        float rotate = 0.6f;
         if (window.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
-            rotate = 0.1f;
+            rotate = 1;
         }
 
-        if (window.isKeyPressed(GLFW_KEY_T)) {
-            objects.get(0).rotateObject(-rotate, 1f, 0f, 0f);
-
+        if (window.isKeyPressed(GLFW_KEY_W)) {
+            rotate1.x(lowerBody, -rotate);
         }
 
-        if (window.isKeyPressed(GLFW_KEY_F)) {
-            objects.get(0).rotateObject(-rotate, 0f, 1f, 0f);
+        if (window.isKeyPressed(GLFW_KEY_A)) {
+            rotate1.y(lowerBody, -rotate);
         }
 
-        if (window.isKeyPressed(GLFW_KEY_G)) {
-            objects.get(0).rotateObject(rotate, 1f, 0f, 0f);
+        if (window.isKeyPressed(GLFW_KEY_S)) {
+            rotate1.x(lowerBody, rotate);
         }
 
-        if (window.isKeyPressed(GLFW_KEY_H)) {
-            objects.get(0).rotateObject(rotate, 0f, 1f, 0f);
+        if (window.isKeyPressed(GLFW_KEY_D)) {
+            rotate1.y(lowerBody, rotate);
         }
 
         if (window.isKeyPressed(GLFW_KEY_UP)) {
@@ -765,6 +1148,7 @@ public class mou {
                 new Vector4f(0f, 0f, 0f, 0f), 0.0f, 0.0f, 0.045f
         ));
 
+
         head.getChildObject().get(2).rotateObject((float) Math.toRadians(-25f), 0f, 1f, 0f);
         head.getChildObject().get(2).rotateObject((float) Math.toRadians(1f), 1f, 0f, 0f);
         head.getChildObject().get(2).translateObject(tempCenterPoint.x - 0.003f, tempCenterPoint.y - 0.005f, tempCenterPoint.z - 0.0045f);
@@ -809,7 +1193,7 @@ public class mou {
         eyeLeft.getChildObject().get(1).scaleObject(1f, 0.5f, 0.01f);
         eyeLeft.getChildObject().get(1).rotateObject((float) Math.toRadians(40f), 0f, 0f, 1f);
         eyeLeft.getChildObject().get(1).rotateObject((float) Math.toRadians(24f), 0f, 1f, 0f);
-        eyeLeft.getChildObject().get(1).translateObject(tempCenterPoint.x - 0.01f, tempCenterPoint.y + 0.015f, tempCenterPoint.z + +0.0048f);
+        eyeLeft.getChildObject().get(1).translateObject(tempCenterPoint.x - 0.01f, tempCenterPoint.y + 0.015f, tempCenterPoint.z + 0.0048f);
 
         //eye left white down
         eyeLeft.getChildObject().add(new Circle(
@@ -849,29 +1233,8 @@ public class mou {
         head.getChildObject().get(3).translateObject(tempCenterPoint.x - 0.003f, tempCenterPoint.y - 0.006f, tempCenterPoint.z - 0.002f);
     }
 
-    public void handRight(Object jointHandRight) {
+    public void handRight() {
         Vector3f tempCenterPoint;
-        //hand right
-        jointHandRight.getChildObject().add(new Tube(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.05f, 0.05f
-        ));
-        handRight = jointHandRight.getChildObject().get(0);
-
-        tempCenterPoint = jointHandRight.updateCenterPointObject();
-        handRight.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
-        handRight.translateObject(tempCenterPoint.x - 0.05f, tempCenterPoint.y, tempCenterPoint.z);
-
-
         //hand tebel
         jointHandRight.getChildObject().add(new Tube(
                 Arrays.asList(
@@ -884,16 +1247,114 @@ public class mou {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.035f, 0.03f
+                new Vector4f(0.788f - 0.05f, 0.815f - 0.05f, 0.305f - 0.05f, 0f), 0.0f, 0.0f, 0.04f, 0.07f
         ));
+        Object handTebel = jointHandRight.getChildObject().get(0);
 
         tempCenterPoint = jointHandRight.updateCenterPointObject();
-        jointHandRight.getChildObject().get(1).rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
-        jointHandRight.getChildObject().get(1).translateObject(tempCenterPoint.x - 0.02f, tempCenterPoint.y, tempCenterPoint.z);
+        handTebel.rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
+        handTebel.translateObject(tempCenterPoint.x - 0.035f, tempCenterPoint.y, tempCenterPoint.z);
 
+
+        tempCenterPoint = handTebel.updateCenterPointObject();
+
+
+        handTebel.getChildObject().add(new Object(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.788f, 0.815f, 0.305f, 0f)
+        ));
+        Object hand = handTebel.getChildObject().get(0);
+
+        objectPointControl.clear();
+        objectPointControl.add(new Curve2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 1
+        ));
+
+
+        float move1 = -0.01f;
+        tempCenterPoint.x += move1;
+        for (double v = -20f; v <= 200; v += 1f) {
+
+            float z = tempCenterPoint.z + 0.027f * (float) (Math.cos(Math.toRadians(v)));
+            float y = tempCenterPoint.y + 0.027f * (float) (Math.sin(Math.toRadians(v)));
+
+            float zextend = tempCenterPoint.z + 0.04f * (float) (Math.cos(Math.toRadians(v)));
+            float yextend = tempCenterPoint.y + 0.04f * (float) (Math.sin(Math.toRadians(v)));
+
+            float zextend2 = tempCenterPoint.z + 0.05f * (float) (Math.cos(Math.toRadians(v)));
+            float yextend2 = tempCenterPoint.y + 0.05f * (float) (Math.sin(Math.toRadians(v)));
+
+
+            objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x, y, z));
+            objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.05f, yextend, zextend));
+            objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.08f, yextend2, zextend2));
+            objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.12f, y, z));
+
+            objectPointControl.get(0).bezierCurve(hand);
+            objectPointControl.get(0).clearVertices();
+        }
+
+
+        for (double v = 201; v <= 215; v += 2f) {
+            float y = tempCenterPoint.y + 0.027f * (float) (Math.sin(Math.toRadians(v)));
+            float z = tempCenterPoint.z + 0.027f * (float) (Math.cos(Math.toRadians(v)));
+
+
+            hand.addVertices(new Vector3f(tempCenterPoint.x, y, z));
+            hand.addVertices(new Vector3f(tempCenterPoint.x - 0.12f, y, z));
+        }
+
+
+        float y = tempCenterPoint.y + 0.029f * (float) (Math.sin(Math.toRadians(201)));
+
+        for (double v = 215; v <= 360; v += 5f) {
+
+            float z = tempCenterPoint.z + 0.027f * (float) (Math.cos(Math.toRadians(v)));
+
+
+            hand.addVertices(new Vector3f(tempCenterPoint.x, y, z));
+            hand.addVertices(new Vector3f(tempCenterPoint.x - 0.12f, y, z));
+        }
+
+        for (double v = -89f; v <= -36; v += 5f) {
+
+            float z = tempCenterPoint.z + 0.027f * (float) (Math.cos(Math.toRadians(v)));
+
+            hand.addVertices(new Vector3f(tempCenterPoint.x, y, z));
+            hand.addVertices(new Vector3f(tempCenterPoint.x - 0.12f, y, z));
+
+        }
+
+        for (double v = -21; v >= -35; v -= 2f) {
+            y = tempCenterPoint.y + 0.027f * (float) (Math.sin(Math.toRadians(v)));
+            float z = tempCenterPoint.z + 0.027f * (float) (Math.cos(Math.toRadians(v)));
+
+
+            hand.addVertices(new Vector3f(tempCenterPoint.x, y, z));
+            hand.addVertices(new Vector3f(tempCenterPoint.x - 0.12f, y, z));
+        }
+
+        hand.translateObject(0f, -0.01f, 0f);
 
         //jari 1 belakang
-        handRight.getChildObject().add(new Sphere3(
+        hand.getChildObject().add(new Sphere3(
                 Arrays.asList(
                         //shaderFile lokasi menyesuaikan objectnya
                         new ShaderProgram.ShaderModuleData
@@ -906,17 +1367,17 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(0.352f, 0.352f, 0.352f, 0f), 0.0f, 0.0f, 0.01f, 0.01f, 0.02f, 0
         ));
-        Object jari1 = handRight.getChildObject().get(0);
+        Object jari1 = hand.getChildObject().get(0);
 
-        tempCenterPoint = handRight.updateCenterPointObject();
+        tempCenterPoint = handTebel.updateCenterPointObject();
 
         jari1.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
-        jari1.rotateObject((float) Math.toRadians(70f), 0f, 1f, 0f);
-        jari1.translateObject(tempCenterPoint.x - 0.09f, tempCenterPoint.y, tempCenterPoint.z - 0.05f);
+        jari1.rotateObject((float) Math.toRadians(80f), 0f, 1f, 0f);
+        jari1.translateObject(tempCenterPoint.x - 0.18f, tempCenterPoint.y, tempCenterPoint.z - 0.038f);
 
 
         //jari 2 tengah
-        handRight.getChildObject().add(new Sphere3(
+        hand.getChildObject().add(new Sphere3(
                 Arrays.asList(
                         //shaderFile lokasi menyesuaikan objectnya
                         new ShaderProgram.ShaderModuleData
@@ -929,17 +1390,15 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(0.352f, 0.352f, 0.352f, 0f), 0.0f, 0.0f, 0.01f, 0.01f, 0.02f, 0
         ));
-        Object jari2 = handRight.getChildObject().get(1);
-
-        tempCenterPoint = handRight.updateCenterPointObject();
+        Object jari2 = hand.getChildObject().get(1);
 
         jari2.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
         jari2.rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
-        jari2.translateObject(tempCenterPoint.x - 0.09f, tempCenterPoint.y, tempCenterPoint.z);
+        jari2.translateObject(tempCenterPoint.x - 0.18f, tempCenterPoint.y, tempCenterPoint.z);
 
 
         //jari 3 depan
-        handRight.getChildObject().add(new Sphere3(
+        hand.getChildObject().add(new Sphere3(
                 Arrays.asList(
                         //shaderFile lokasi menyesuaikan objectnya
                         new ShaderProgram.ShaderModuleData
@@ -952,13 +1411,11 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(0.352f, 0.352f, 0.352f, 0f), 0.0f, 0.0f, 0.01f, 0.01f, 0.02f, 0
         ));
-        Object jari3 = handRight.getChildObject().get(2);
-
-        tempCenterPoint = handRight.updateCenterPointObject();
+        Object jari3 = hand.getChildObject().get(2);
 
         jari3.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
-        jari3.rotateObject((float) Math.toRadians(110f), 0f, 1f, 0f);
-        jari3.translateObject(tempCenterPoint.x - 0.09f, tempCenterPoint.y, tempCenterPoint.z + 0.05f);
+        jari3.rotateObject((float) Math.toRadians(100f), 0f, 1f, 0f);
+        jari3.translateObject(tempCenterPoint.x - 0.18f, tempCenterPoint.y, tempCenterPoint.z + 0.038f);
 
 
         //jari1 tube
@@ -973,12 +1430,32 @@ public class mou {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.015f, 0.03f
+                new Vector4f(0.788f, 0.815f, 0.305f, 0f), 0.0f, 0.0f, 0.015f, 0.03f
         ));
 
-        jari1.getChildObject().get(0).rotateObject((float) Math.toRadians(70f), 0f, 1f, 0f);
+        jari1.getChildObject().get(0).rotateObject((float) Math.toRadians(100f), 0f, 1f, 0f);
         tempCenterPoint = jari1.updateCenterPointObject();
-        jari1.getChildObject().get(0).translateObject(tempCenterPoint.x + 0.06f, tempCenterPoint.y, tempCenterPoint.z + 0.022f);
+        jari1.getChildObject().get(0).translateObject(tempCenterPoint.x + 0.06f, tempCenterPoint.y, tempCenterPoint.z + 0.064f);
+
+
+        //jari2 tube
+        jari2.getChildObject().add(new Tube(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.788f, 0.815f, 0.305f, 0f), 0.0f, 0.0f, 0.015f, 0.03f
+        ));
+
+        jari2.getChildObject().get(0).rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
+        tempCenterPoint = jari2.updateCenterPointObject();
+        jari2.getChildObject().get(0).translateObject(tempCenterPoint.x + 0.06f, tempCenterPoint.y, tempCenterPoint.z);
 
 
         //jari3 tube
@@ -993,38 +1470,17 @@ public class mou {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.015f, 0.03f
+                new Vector4f(0.788f, 0.815f, 0.305f, 0f), 0.0f, 0.0f, 0.015f, 0.03f
         ));
 
-        jari3.getChildObject().get(0).rotateObject((float) Math.toRadians(110f), 0f, 1f, 0f);
+        jari3.getChildObject().get(0).rotateObject((float) Math.toRadians(80f), 0f, 1f, 0f);
         tempCenterPoint = jari3.updateCenterPointObject();
-        jari3.getChildObject().get(0).translateObject(tempCenterPoint.x + 0.06f, tempCenterPoint.y, tempCenterPoint.z - 0.022f);
+        jari3.getChildObject().get(0).translateObject(tempCenterPoint.x + 0.06f, tempCenterPoint.y, tempCenterPoint.z - 0.064f);
 
     }
 
-    public void handLeft(Object jointHandLeft) {
+    public void handLeft() {
         Vector3f tempCenterPoint;
-        //hand Left
-        jointHandLeft.getChildObject().add(new Tube(
-                Arrays.asList(
-                        //shaderFile lokasi menyesuaikan objectnya
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.vert"
-                                        , GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData
-                                ("resources/shaders/scene.frag"
-                                        , GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.05f, 0.05f
-        ));
-        handLeft = jointHandLeft.getChildObject().get(0);
-
-        tempCenterPoint = jointHandLeft.updateCenterPointObject();
-        handLeft.rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
-        handLeft.translateObject(tempCenterPoint.x + 0.05f, tempCenterPoint.y, tempCenterPoint.z);
-
-
         //hand tebel
         jointHandLeft.getChildObject().add(new Tube(
                 Arrays.asList(
@@ -1037,16 +1493,112 @@ public class mou {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.035f, 0.03f
+                new Vector4f(0.788f - 0.05f, 0.815f - 0.05f, 0.305f - 0.05f, 0f), 0.0f, 0.0f, 0.04f, 0.07f
         ));
+        Object handTebel = jointHandLeft.getChildObject().get(0);
 
         tempCenterPoint = jointHandLeft.updateCenterPointObject();
-        jointHandLeft.getChildObject().get(1).rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
-        jointHandLeft.getChildObject().get(1).translateObject(tempCenterPoint.x + 0.02f, tempCenterPoint.y, tempCenterPoint.z);
+        handTebel.rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
+        handTebel.translateObject(tempCenterPoint.x + 0.035f, tempCenterPoint.y, tempCenterPoint.z);
 
+
+        tempCenterPoint = handTebel.updateCenterPointObject();
+
+        handTebel.getChildObject().add(new Object(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.788f, 0.815f, 0.305f, 0f)
+        ));
+        Object hand = handTebel.getChildObject().get(0);
+
+
+        objectPointControl.add(new Curve2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 1
+        ));
+
+
+        float move1 = 0.01f;
+        tempCenterPoint.x += move1;
+        for (double v = -20f; v <= 200; v += 1f) {
+
+            float z = tempCenterPoint.z + 0.027f * (float) (Math.cos(Math.toRadians(v)));
+            float y = tempCenterPoint.y + 0.027f * (float) (Math.sin(Math.toRadians(v)));
+
+            float zextend = tempCenterPoint.z + 0.04f * (float) (Math.cos(Math.toRadians(v)));
+            float yextend = tempCenterPoint.y + 0.04f * (float) (Math.sin(Math.toRadians(v)));
+
+            float zextend2 = tempCenterPoint.z + 0.05f * (float) (Math.cos(Math.toRadians(v)));
+            float yextend2 = tempCenterPoint.y + 0.05f * (float) (Math.sin(Math.toRadians(v)));
+
+
+            objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x, y, z));
+            objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.05f, yextend, zextend));
+            objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.08f, yextend2, zextend2));
+            objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.12f, y, z));
+
+            objectPointControl.get(0).bezierCurve(hand);
+            objectPointControl.get(0).clearVertices();
+        }
+
+
+        for (double v = 201; v <= 215; v += 2f) {
+            float y = tempCenterPoint.y + 0.027f * (float) (Math.sin(Math.toRadians(v)));
+            float z = tempCenterPoint.z + 0.027f * (float) (Math.cos(Math.toRadians(v)));
+
+
+            hand.addVertices(new Vector3f(tempCenterPoint.x, y, z));
+            hand.addVertices(new Vector3f(tempCenterPoint.x + 0.12f, y, z));
+        }
+
+
+        float y = tempCenterPoint.y + 0.029f * (float) (Math.sin(Math.toRadians(201)));
+
+        for (double v = 215; v <= 360; v += 5f) {
+
+            float z = tempCenterPoint.z + 0.027f * (float) (Math.cos(Math.toRadians(v)));
+
+
+            hand.addVertices(new Vector3f(tempCenterPoint.x, y, z));
+            hand.addVertices(new Vector3f(tempCenterPoint.x + 0.12f, y, z));
+        }
+
+        for (double v = -89f; v <= -36; v += 5f) {
+
+            float z = tempCenterPoint.z + 0.027f * (float) (Math.cos(Math.toRadians(v)));
+
+            hand.addVertices(new Vector3f(tempCenterPoint.x, y, z));
+            hand.addVertices(new Vector3f(tempCenterPoint.x + 0.12f, y, z));
+
+        }
+
+        for (double v = -21; v >= -35; v -= 2f) {
+            y = tempCenterPoint.y + 0.027f * (float) (Math.sin(Math.toRadians(v)));
+            float z = tempCenterPoint.z + 0.027f * (float) (Math.cos(Math.toRadians(v)));
+
+
+            hand.addVertices(new Vector3f(tempCenterPoint.x, y, z));
+            hand.addVertices(new Vector3f(tempCenterPoint.x + 0.12f, y, z));
+        }
+        hand.translateObject(0f, -0.01f, 0f);
 
         //jari 1 belakang
-        handLeft.getChildObject().add(new Sphere3(
+        hand.getChildObject().add(new Sphere3(
                 Arrays.asList(
                         //shaderFile lokasi menyesuaikan objectnya
                         new ShaderProgram.ShaderModuleData
@@ -1059,17 +1611,17 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(0.352f, 0.352f, 0.352f, 0f), 0.0f, 0.0f, 0.01f, 0.01f, 0.02f, 0
         ));
-        Object jari1 = handLeft.getChildObject().get(0);
+        Object jari1 = hand.getChildObject().get(0);
 
-        tempCenterPoint = handLeft.updateCenterPointObject();
+        tempCenterPoint = handTebel.updateCenterPointObject();
 
         jari1.rotateObject((float) Math.toRadians(-90f), 1f, 0f, 0f);
-        jari1.rotateObject((float) Math.toRadians(110f), 0f, 1f, 0f);
-        jari1.translateObject(tempCenterPoint.x + 0.09f, tempCenterPoint.y, tempCenterPoint.z - 0.05f);
+        jari1.rotateObject((float) Math.toRadians(100f), 0f, 1f, 0f);
+        jari1.translateObject(tempCenterPoint.x + 0.18f, tempCenterPoint.y, tempCenterPoint.z - 0.038f);
 
 
         //jari 2 tengah
-        handLeft.getChildObject().add(new Sphere3(
+        hand.getChildObject().add(new Sphere3(
                 Arrays.asList(
                         //shaderFile lokasi menyesuaikan objectnya
                         new ShaderProgram.ShaderModuleData
@@ -1082,17 +1634,15 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(0.352f, 0.352f, 0.352f, 0f), 0.0f, 0.0f, 0.01f, 0.01f, 0.02f, 0
         ));
-        Object jari2 = handLeft.getChildObject().get(1);
-
-        tempCenterPoint = handLeft.updateCenterPointObject();
+        Object jari2 = hand.getChildObject().get(1);
 
         jari2.rotateObject((float) Math.toRadians(-90f), 1f, 0f, 0f);
         jari2.rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
-        jari2.translateObject(tempCenterPoint.x + 0.09f, tempCenterPoint.y, tempCenterPoint.z);
+        jari2.translateObject(tempCenterPoint.x + 0.18f, tempCenterPoint.y, tempCenterPoint.z);
 
 
         //jari 3 depan
-        handLeft.getChildObject().add(new Sphere3(
+        hand.getChildObject().add(new Sphere3(
                 Arrays.asList(
                         //shaderFile lokasi menyesuaikan objectnya
                         new ShaderProgram.ShaderModuleData
@@ -1105,13 +1655,11 @@ public class mou {
                 new ArrayList<>(),
                 new Vector4f(0.352f, 0.352f, 0.352f, 0f), 0.0f, 0.0f, 0.01f, 0.01f, 0.02f, 0
         ));
-        Object jari3 = handLeft.getChildObject().get(2);
-
-        tempCenterPoint = handLeft.updateCenterPointObject();
+        Object jari3 = hand.getChildObject().get(2);
 
         jari3.rotateObject((float) Math.toRadians(-90f), 1f, 0f, 0f);
-        jari3.rotateObject((float) Math.toRadians(70f), 0f, 1f, 0f);
-        jari3.translateObject(tempCenterPoint.x + 0.09f, tempCenterPoint.y, tempCenterPoint.z + 0.05f);
+        jari3.rotateObject((float) Math.toRadians(80f), 0f, 1f, 0f);
+        jari3.translateObject(tempCenterPoint.x + 0.18f, tempCenterPoint.y, tempCenterPoint.z + 0.038f);
 
 
         //jari1 tube
@@ -1126,12 +1674,32 @@ public class mou {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.015f, 0.03f
+                new Vector4f(0.788f, 0.815f, 0.305f, 0f), 0.0f, 0.0f, 0.015f, 0.03f
         ));
 
-        jari1.getChildObject().get(0).rotateObject((float) Math.toRadians(-70f), 0f, 1f, 0f);
+        jari1.getChildObject().get(0).rotateObject((float) Math.toRadians(-100f), 0f, 1f, 0f);
         tempCenterPoint = jari1.updateCenterPointObject();
-        jari1.getChildObject().get(0).translateObject(tempCenterPoint.x - 0.06f, tempCenterPoint.y, tempCenterPoint.z + 0.022f);
+        jari1.getChildObject().get(0).translateObject(tempCenterPoint.x - 0.06f, tempCenterPoint.y, tempCenterPoint.z + 0.064f);
+
+
+        //jari2 tube
+        jari2.getChildObject().add(new Tube(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.788f, 0.815f, 0.305f, 0f), 0.0f, 0.0f, 0.015f, 0.03f
+        ));
+
+        jari2.getChildObject().get(0).rotateObject((float) Math.toRadians(-90f), 0f, 1f, 0f);
+        tempCenterPoint = jari2.updateCenterPointObject();
+        jari2.getChildObject().get(0).translateObject(tempCenterPoint.x - 0.06f, tempCenterPoint.y, tempCenterPoint.z);
 
 
         //jari3 tube
@@ -1146,12 +1714,12 @@ public class mou {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.015f, 0.03f
+                new Vector4f(0.788f, 0.815f, 0.305f, 0f), 0.0f, 0.0f, 0.015f, 0.03f
         ));
 
-        jari3.getChildObject().get(0).rotateObject((float) Math.toRadians(-110f), 0f, 1f, 0f);
+        jari3.getChildObject().get(0).rotateObject((float) Math.toRadians(-80f), 0f, 1f, 0f);
         tempCenterPoint = jari3.updateCenterPointObject();
-        jari3.getChildObject().get(0).translateObject(tempCenterPoint.x - 0.06f, tempCenterPoint.y, tempCenterPoint.z - 0.022f);
+        jari3.getChildObject().get(0).translateObject(tempCenterPoint.x - 0.06f, tempCenterPoint.y, tempCenterPoint.z - 0.064f);
 
     }
 
@@ -1179,9 +1747,9 @@ public class mou {
 //                object.draw(camera, projection);
 //            }
 
-            for (Object object : objectPointControl) {
-                object.drawLine(camera, projection);
-            }
+//            for (Object object : objectPointControl) {
+//                object.drawLine(camera, projection);
+//            }
 //
 //            for (Object object : objectPointCurve) {
 //                object.drawLine();

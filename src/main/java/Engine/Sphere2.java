@@ -13,12 +13,15 @@ public class Sphere2 extends Circle2{
     float radiusZ;
     int stackCount;
     int sectorCount;
+
+    float angle;
     public Sphere2(List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, Vector4f color, List<Float> centerPoint, Float radiusX, Float radiusY, Float radiusZ,
-                  int sectorCount,int stackCount) {
+                  int sectorCount,int stackCount, float angle) {
         super(shaderModuleDataList, vertices, color, centerPoint, radiusX, radiusY);
         this.radiusZ = radiusZ;
         this.stackCount = stackCount;
         this.sectorCount = sectorCount;
+        this.angle =angle;
         createBox();
 //        createSphere();
         setupVAOVBO();
@@ -70,7 +73,6 @@ public class Sphere2 extends Circle2{
         }
         vertices = temp;
     }
-
 
 
     public void createBox(){
