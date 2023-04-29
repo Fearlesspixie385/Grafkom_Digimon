@@ -30,6 +30,7 @@ public class main {
     private Object jointHead;
     private Object eyeRight; //from char perspective
     private Object eyeLeft;
+    private Object jointUpperBody;
     private Object jointArmLeft;
     private Object jointArmRight;
     private Object jointHandLeft;
@@ -1320,13 +1321,31 @@ public class main {
                 new ArrayList<>(),
                 new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.13f, 0.13f, 0.07f, 0
         ));
-
         lowerBody = objects.get(2);
         int intlowerBody = 0;
 
+        //joint upperbody
+        lowerBody.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.2f, 0.2f, 0.15f
+        ));
+        jointUpperBody = lowerBody.getChildObject().get(intlowerBody);
+        intlowerBody++;
+        jointUpperBody.scaleObject(0.1f, 0.1f, 0.1f);
+        jointUpperBody.translateObject(0f, 0.16f, 0f);
+
 
         //upper body
-        lowerBody.getChildObject().add(new Sphere3(
+        jointUpperBody.getChildObject().add(new Sphere3(
                 Arrays.asList(
                         //shaderFile lokasi menyesuaikan objectnya
                         new ShaderProgram.ShaderModuleData
@@ -1339,9 +1358,9 @@ public class main {
                 new ArrayList<>(),
                 new Vector4f(1f, 1f, 1f, 0f), 0.0f, 0.0f, 0.13f, 0.13f, 0.158f, 0
         ));
-        upperBody = lowerBody.getChildObject().get(intlowerBody);
+        upperBody = jointUpperBody.getChildObject().get(0);
         int intupperBody = 0;
-        intlowerBody++;
+
 
         upperBody.rotateObject((float) Math.toRadians(180f), 0.0f, 0.0f, 1.0f);
         upperBody.translateObject(0f, 0.565f, 0.0f);
@@ -2172,7 +2191,6 @@ public class main {
         objectPointControl.get(0).bezierCurve(tail);
 
 
-
         tempCenterPoint = jointArmRight.updateCenterPointObject();
         jointArmRight.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
         jointArmRight.rotateObject((float) Math.toRadians(55f), 0f, 0f, 1f);
@@ -2184,6 +2202,7 @@ public class main {
         jointArmLeft.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
 
         lowerBody.translateObject(0f, -0.2f, 0f);
+
 
         for (int i = 0; i < 3; i++) {
             valueArray.add(0.0);
@@ -2455,6 +2474,7 @@ public class main {
 
             }
 
+        //code mou input
         class Rotate {
             private void x (Object object, float rotate) {
                 Vector3f tempCenterPoint = object.updateCenterPointObject();
@@ -2576,6 +2596,7 @@ public class main {
 
 
                     if (valueArray.get(1) < -18) {
+
                         rotate1.x(jointFootRight, move * 1.3f);
                     }
                     else {
@@ -2590,6 +2611,97 @@ public class main {
                     stateArray.set(3, true);
                     jointFootRight.resetPos();
                     jointFootLeft.resetPos();
+                }
+            }
+        }
+
+
+        //value 2 state 4 5 jump
+        if (window.isKeyPressed(GLFW_KEY_LEFT_ALT)) {
+            float move = 1;
+            if (stateArray.get(5)) {
+                if (valueArray.get(2) < 30 && stateArray.get(4)) {
+                    rotate1.x(jointArmLeft, move * 2);
+                    rotate1.x(jointArmRight, move * 2);
+
+                    rotate1.x(jointLegLeft, -move * 1.6f);
+                    rotate1.x(jointLegRight, -move * 1.6f);
+
+                    rotate1.x(jointFootLeft, move);
+                    rotate1.x(jointFootRight, move);
+
+                    rotate1.x(lowerBody, move/1.5f);
+                    rotate1.x(jointUpperBody, move/2.2f);
+                    if (valueArray.get(2) < 15) {
+                        lowerBody.translateObject(-0.005f, -valueArray.get(2).floatValue() / 9000f, 0f);
+                    }
+                    else
+                        lowerBody.translateObject(-0.005f, -valueArray.get(2).floatValue() / 20000f, 0f);
+
+                    jointUpperBody.translateObject(-0.0005f,0f,0f);
+
+
+                    valueArray.set(2, valueArray.get(2) + move);
+
+                } else {
+                    stateArray.set(4, false);
+                    rotate1.x(jointArmLeft, -move * 2);
+                    rotate1.x(jointArmRight, -move * 2);
+
+                    rotate1.x(jointLegLeft, move * 1.6f);
+                    rotate1.x(jointLegRight, move * 1.6f);
+
+                    rotate1.x(jointFootLeft, -move);
+                    rotate1.x(jointFootRight, -move);
+
+                    rotate1.x(lowerBody, -move/1.5f);
+                    rotate1.x(jointUpperBody, -move/2.2f);
+                    System.out.println(valueArray.get(2));
+                    if (valueArray.get(2) < 15) {
+                        lowerBody.translateObject(0.005f, valueArray.get(2).floatValue() / 9000f, 0f);
+                    }
+                    else
+                        lowerBody.translateObject(0.005f, valueArray.get(2).floatValue() / 20000f, 0f);
+
+                    jointUpperBody.translateObject(0.0005f,0f,0f);
+
+                    valueArray.set(2, valueArray.get(2) - move);
+                }
+
+                if (valueArray.get(2) == 0) {
+                    stateArray.set(4, true);
+                    stateArray.set(5, false);
+                    lowerBody.resetPosChildren(1);
+                }
+            } else {
+
+                if (valueArray.get(2) > -45 && stateArray.get(4)) {
+                    rotate1.x(jointArmLeft, -move * 4);
+                    rotate1.x(jointArmRight, -move * 4);
+
+                    if (valueArray.get(2) > -15) {
+                        rotate1.x(jointFootRight, move);
+                        rotate1.x(jointFootLeft, move);
+                    }
+
+                    valueArray.set(2, valueArray.get(2) - move);
+                } else {
+                    stateArray.set(4, false);
+                    rotate1.x(jointArmLeft, move * 4);
+                    rotate1.x(jointArmRight, move * 4);
+
+                    if (valueArray.get(2) >= -15) {
+                        rotate1.x(jointFootRight, -move);
+                        rotate1.x(jointFootLeft, -move);
+                    }
+
+                    valueArray.set(2, valueArray.get(2) + move);
+                }
+
+                if (valueArray.get(2) == 0) {
+                    stateArray.set(4, true);
+                    stateArray.set(5, true);
+
                 }
             }
         }

@@ -42,43 +42,6 @@ public class Sphere3 extends Circle {
 
 
     public void createQuadratic(int cases) {
-
-//        ArrayList<Vector3f> temp = new ArrayList<>();
-//        for (double v = -Math.PI / 2; v <= Math.PI / 2; v += Math.PI / 60) {
-//            for (double u = -Math.PI; u <= Math.PI; u += Math.PI / 60) {
-//                float x = rx * (float) (Math.cos(v) * Math.cos(u));
-//                float y = ry * (float) (Math.cos(v) * Math.sin(u));
-//                float z = rz * (float) (Math.sin(v));
-//                temp.add(new Vector3f(x, y, z));
-//            }
-//        }
-
-//        ArrayList<Vector3f> temp = new ArrayList<>();
-//        for (double v = -Math.PI / 2; v <= Math.PI / 2; v += Math.PI / 120) {
-//            for (double u = -Math.PI; u <= Math.PI; u += Math.PI / 120) {
-//                float x = rx * (float) (1/Math.cos(v) * Math.cos(u));
-//                float y = ry * (float) (1/Math.cos(v) * Math.sin(u));
-//                float z = rz * (float) (Math.tan(v));
-//                temp.add(new Vector3f(x, z, y));
-//            }
-//        }
-
-//        ArrayList<Vector3f> temp = new ArrayList<>();
-//        for (double v = -Math.PI / 2; v <= Math.PI / 2; v += Math.PI / 120) {
-//            for (double u = -Math.PI / 2; u <= Math.PI / 2; u += Math.PI / 180) {
-//                float x = 0.7f * (float) (Math.tan(v) * Math.cos(u));
-//                float y = 0.7f * (float) (Math.tan(v) * Math.sin(u));
-//                float z = 0.7f * (float) (1 / Math.cos(v));
-//                temp.add(new Vector3f(x, z, y));
-//            }
-//
-//            for (double u = Math.PI/2; u <= 3 * Math.PI / 2; u += Math.PI / 180) {
-//                float x = 0.7f * (float) (Math.tan(v) * Math.cos(u));
-//                float y = 0.7f * (float) (Math.tan(v) * Math.sin(u));
-//                float z = 0.7f * (float) (1 / Math.cos(v));
-//                temp.add(new Vector3f(x, z, y));
-//            }
-//        }
         ArrayList<Vector3f> temp = new ArrayList<>();
         switch (cases) {
             //lowerbody upperbody Elliptic Paraboloid
@@ -133,9 +96,6 @@ public class Sphere3 extends Circle {
                 createBox();
         }
         vertices = temp;
-
-//        draw();
-
     }
 
     public void createBox() {
