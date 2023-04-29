@@ -2266,6 +2266,8 @@ public class main {
 
         Object floor = environment.get(0);
         floor.translateObject(0f, -3f, 0f);
+
+
         //platform atas floor
         floor.getChildObject().add(new Sphere3(
                 Arrays.asList(
@@ -2278,13 +2280,13 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, 0.2f, 0.2f, 0.2f, true
+                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, 3f, 0.3f, 1f, true
         ));
 
         tempCenterPoint = floor.updateCenterPointObject();
-        floor.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y + 1f, tempCenterPoint.z + 1f);
+        floor.getChildObject().get(0).translateObject(tempCenterPoint.x - 1f, tempCenterPoint.y + 1f, tempCenterPoint.z);
 
-        //Wall
+        //Wall back
         environment.add(new Sphere2(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
@@ -2300,9 +2302,51 @@ public class main {
                 72,
                 180f
         ));
-        environment.get(1).translateObject(0f, 1f, -1f);
+        Object wallBack = environment.get(1);
+        wallBack.translateObject(0f, 1f, -1f);
 
-        //vertical floors
+        //wall left
+        environment.add(new Sphere2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.7f, 0.69f, 0.62f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
+                2f,
+                8f,
+                .005f,
+                108,
+                72,
+                180f
+        ));
+        Object wallLeft = environment.get(2);
+
+        wallLeft.rotateObject((float) Math.toRadians(270f), 0f, 1f, 0f);
+        wallLeft.translateObject(-5f, 1f, 0.0f);
+
+
+        //platform atas wall left
+        wallLeft.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, 0.3f, 3f, 1f, true
+        ));
+
+        tempCenterPoint = wallLeft.updateCenterPointObject();
+        wallLeft.getChildObject().get(0).translateObject(tempCenterPoint.x + 1f, tempCenterPoint.y + 1f, tempCenterPoint.z);
+
+
+        //wall right
         environment.add(new Sphere2(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
@@ -2319,28 +2363,31 @@ public class main {
                 180f
         ));
 
-        environment.get(2).rotateObject((float) Math.toRadians(270f), 0f, 1f, 0f);
-        environment.get(2).translateObject(-5f, 1f, 0.0f);
+        Object wallRight = environment.get(3);
+        wallRight.rotateObject((float) Math.toRadians(270f), 0f, 1f, 0f);
+        wallRight.translateObject(5f, 1f, 0.0f);
 
-        environment.add(new Sphere2(
+
+        //platform atas wall right
+        wallRight.getChildObject().add(new Sphere3(
                 Arrays.asList(
-                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.7f, 0.69f, 0.62f, 1.0f),
-                Arrays.asList(0.0f, 0.0f, 0.0f),
-                2f,
-                8f,
-                .005f,
-                108,
-                72,
-                180f
+                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, 0.3f, 3f, 1f, true
         ));
 
-        environment.get(3).rotateObject((float) Math.toRadians(270f), 0f, 1f, 0f);
-        environment.get(3).translateObject(5f, 1f, 0.0f);
+        tempCenterPoint = wallRight.updateCenterPointObject();
+        wallRight.getChildObject().get(0).translateObject(tempCenterPoint.x - 1f, tempCenterPoint.y - 1f, tempCenterPoint.z);
 
+
+        //roof
         environment.add(new Sphere2(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
@@ -2349,19 +2396,34 @@ public class main {
                 new ArrayList<>(),
                 new Vector4f(0.7f, 0.69f, 0.62f, 1.0f),
                 Arrays.asList(0.0f, 0.0f, 0.0f),
-                5f,
+                10f,
                 0.02f,
-                5f,
+                2f,
                 108,
                 72,
                 180f
         ));
-        environment.get(4).translateObject(0f, 3f, 0f);
+        Object roof = environment.get(4);
+        roof.translateObject(0f,5f,0f);
 
-        objects.get(0).translateObject(0f,-1f,0f);
-        objects.get(1).translateObject(0f,-1f,0f);
-        //environment.get(1).translateObject(tempCenterPoint.x, tempCenterPoint.y + 10f, tempCenterPoint.z);
 
+        //platform atas floor
+        roof.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, 3f, 0.3f, 1f, true
+        ));
+
+        tempCenterPoint = roof.updateCenterPointObject();
+        roof.getChildObject().get(0).translateObject(tempCenterPoint.x + 1f, tempCenterPoint.y - 1f, tempCenterPoint.z);
 
 
     }
