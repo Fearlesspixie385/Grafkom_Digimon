@@ -1,5 +1,5 @@
-import Engine.*;
 import Engine.Object;
+import Engine.*;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -12,6 +12,7 @@ import java.util.List;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL30.*;
+
 public class Palmon {
     private Window window =
             new Window(600,600,
@@ -30,6 +31,8 @@ public class Palmon {
     int action = -1;
     float timer = 0;
     boolean evolveFinish = false;
+    List<Float> latestPosition = new ArrayList<>();
+
 
     public void init(){
         window.init();
@@ -427,7 +430,7 @@ public class Palmon {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(1f,0.0f,0.0f,1.0f), true
+                        new Vector4f(0f,0.0f,0.0f,1.0f), true
                 )
         );
 //        objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(-0.125f, 0.1f, 0.0f));
@@ -499,9 +502,9 @@ public class Palmon {
                         new ArrayList<>(),
                         new Vector4f(0.85f,0.97f,0.46f,1.0f),
                         Arrays.asList(0.0f,0.0f,0.0f),
-                0.03f,
-                0.04f,
-                0.1f,
+                        0.03f,
+                        0.04f,
+                        0.1f,
                         0
                 )
         );
@@ -520,9 +523,9 @@ public class Palmon {
                         new ArrayList<>(),
                         new Vector4f(0.85f,0.97f,0.46f,1.0f),
                         Arrays.asList(0.0f,0.0f,0.0f),
-                0.04f,
-                0.09f,
-                0.18f,
+                        0.04f,
+                        0.09f,
+                        0.18f,
                         0
                 )
         );
@@ -732,9 +735,9 @@ public class Palmon {
                         new ArrayList<>(),
                         new Vector4f(0.85f,0.97f,0.46f,1.0f),
                         Arrays.asList(0.0f,0.0f,0.0f),
-                    0.004f,
-                    0.005f,
-                    0.003f,
+                        0.004f,
+                        0.005f,
+                        0.003f,
                         1,-7,0
                 )
         );
@@ -769,16 +772,21 @@ public class Palmon {
     }
     public void input(){
 //        Walk
+
         if (window.isKeyPressed(GLFW_KEY_Z)) {
-//            List<Float> temp = new ArrayList<>(objects.get(0).getChildObject().get(3).getCenterPoint());
-//            List<Float> temp2 = new ArrayList<>(objects.get(0).getChildObject().get(4).getCenterPoint());
-//            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*-1,temp.get(1)*-1,temp.get(2)*-1);
-//            objects.get(0).getChildObject().get(3).rotateObject(1.5f, 1f, 0f, 0f,15f);
-//            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*1,temp.get(1)*1,temp.get(2)*1);
-//
-//            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*-1,temp2.get(1)*-1,temp2.get(2)*-1);
-//            objects.get(0).getChildObject().get(4).rotateObject(1.5f, -1f, 0f, 0f,15f);
-//            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*1,temp2.get(1)*1,temp2.get(2)*1);
+            List<Float> temp = new ArrayList<>(objects.get(0).getChildObject().get(3).getCenterPoint());
+            List<Float> temp2 = new ArrayList<>(objects.get(0).getChildObject().get(4).getCenterPoint());
+            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*-1,temp.get(1)*-1,temp.get(2)*-1);
+            objects.get(0).getChildObject().get(3).rotateObject((float)Math.toRadians(1.5), 1f, 0f, 0f);
+            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*1,temp.get(1)*1,temp.get(2)*1);
+
+            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*-1,temp2.get(1)*-1,temp2.get(2)*-1);
+            objects.get(0).getChildObject().get(4).rotateObject((float)Math.toRadians(1.5), 1f, 0f, 0f);
+            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*1,temp2.get(1)*1,temp2.get(2)*1);
+
+            if(timer > 15){
+
+            }
         }
 //        Run
         if (window.isKeyPressed(GLFW_KEY_X)) {
@@ -814,6 +822,7 @@ public class Palmon {
         }
         //Evolve
         if (window.isKeyPressed(GLFW_KEY_E) && !evolveFinish) {
+            timer = 0;
             action = 0;
             startEvolve = true;
             hold = false;
@@ -869,6 +878,7 @@ public class Palmon {
             }
 
         }
+
 
     }
     public void Evolve(){
@@ -943,9 +953,12 @@ public class Palmon {
             if(objects.get(0).getCenterPoint().get(1) <= -0.05f){
                 action = 3;
                 timer = 0.9f;
+                latestPosition = new ArrayList<>(objects.get(0).getCenterPoint());
+                System.out.println("latest: "+latestPosition);
+
             }
         }
-        ///Transform to togemon with effects
+        ///Transform to togemon
         if (action == 3){
             //Effect
             timer -= 0.1;
@@ -958,7 +971,7 @@ public class Palmon {
         }
         if (action == 4){
             if(!evolveFinish) Togemon();
-            List<Float> temp1 = new ArrayList<>(objects.get(0).getCenterPoint());
+            List<Float> temp1 = new ArrayList<>(objects.get(1).getCenterPoint());
             timer -= 0.1;
             objects.get(1).scaleObject(1.25f, 1.25f, 1.25f);
             objects.get(1).translateObject(0f,0.005f,0f);
@@ -1489,8 +1502,11 @@ public class Palmon {
         objects.get(1).getChildObject().get(0).rotateObject((float)Math.toRadians(40f),0f,0f,-1f);
         objects.get(1).getChildObject().get(0).translateObject(-0.2f, 0.7f, 0.0f);
 
-        //objects.get(1).translateObject(0.2f, 0.7f, 0.0f);
+        //objects.get(1).translateObject(-latestPosition.get(0), -latestPosition.get(1), -latestPosition.get(2));
+        System.out.println("latest: "+latestPosition);
+        objects.get(1).translateObject(latestPosition.get(0), latestPosition.get(1), latestPosition.get(2));
         objects.get(1).scaleObject(0.02f, 0.02f, 0.02f);
+
         evolveFinish = true;
 
         System.out.println("Hi");

@@ -1306,7 +1306,7 @@ public class main {
         objects.get(0).scaleObject(3f,3f,3f);
 
 
-        //code mouritus
+//        code mouritus
         //lower body
         objects.add(new Sphere3(
                 Arrays.asList(
@@ -2201,6 +2201,9 @@ public class main {
         jointArmLeft.rotateObject((float) Math.toRadians(-55f), 0f, 0f, 1f);
         jointArmLeft.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
 
+        lowerBody.translateObject(0f, -0.2f, 0f);
+
+
         for (int i = 0; i < 3; i++) {
             valueArray.add(0.0);
         }
@@ -2260,9 +2263,9 @@ public class main {
                 72,
                 180f
         ));
+
         Object floor = environment.get(0);
         floor.translateObject(0f, -3f, 0f);
-
         //platform atas floor
         floor.getChildObject().add(new Sphere3(
                 Arrays.asList(
@@ -2281,8 +2284,6 @@ public class main {
         tempCenterPoint = floor.updateCenterPointObject();
         floor.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y + 1f, tempCenterPoint.z + 1f);
 
-
-
         //Wall
         environment.add(new Sphere2(
                 Arrays.asList(
@@ -2299,18 +2300,19 @@ public class main {
                 72,
                 180f
         ));
-        environment.get(1).translateObject(0f, -2f, -1f);
+        environment.get(1).translateObject(0f, 1f, -1f);
 
+        //vertical floors
         environment.add(new Sphere2(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.49f, 0.62f, 0.675f, 1.0f),
+                new Vector4f(0.7f, 0.69f, 0.62f, 1.0f),
                 Arrays.asList(0.0f, 0.0f, 0.0f),
-                5f,
-                1.5f,
+                2f,
+                8f,
                 .005f,
                 108,
                 72,
@@ -2318,8 +2320,7 @@ public class main {
         ));
 
         environment.get(2).rotateObject((float) Math.toRadians(270f), 0f, 1f, 0f);
-        environment.get(2).translateObject(-2.5f, 1f, 0.0f);
-
+        environment.get(2).translateObject(-5f, 1f, 0.0f);
 
         environment.add(new Sphere2(
                 Arrays.asList(
@@ -2327,20 +2328,19 @@ public class main {
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.49f, 0.62f, 0.675f, 1.0f),
+                new Vector4f(0.7f, 0.69f, 0.62f, 1.0f),
                 Arrays.asList(0.0f, 0.0f, 0.0f),
-                5f,
-                1.5f,
+                2f,
+                8f,
                 .005f,
                 108,
                 72,
                 180f
         ));
 
-        environment.get(3).rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
-        environment.get(3).translateObject(2.5f, 1f, 0.0f);
+        environment.get(3).rotateObject((float) Math.toRadians(270f), 0f, 1f, 0f);
+        environment.get(3).translateObject(5f, 1f, 0.0f);
 
-        //Roof
         environment.add(new Sphere2(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
@@ -2457,17 +2457,18 @@ public class main {
                 y.translateObject(temp1.get(0) * 1, temp1.get(1) * 1, temp1.get(2) * 1);
                 System.out.println(kaki);
             }
+
             List<Float> temp = new ArrayList<>(objects.get(0).getChildObject().get(3).getCenterPoint());
             List<Float> temp2 = new ArrayList<>(objects.get(0).getChildObject().get(4).getCenterPoint());
-//            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*-1,temp.get(1)*-1,temp.get(2)*-1);
-//            objects.get(0).getChildObject().get(3).rotateObject(1.5f, 1f, 0f, 0f,15f);
-//            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*1,temp.get(1)*1,temp.get(2)*1);
-//
-//            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*-1,temp2.get(1)*-1,temp2.get(2)*-1);
-//            objects.get(0).getChildObject().get(4).rotateObject(1.5f, -1f, 0f, 0f,15f);
-//            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*1,temp2.get(1)*1,temp2.get(2)*1);
+            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*-1,temp.get(1)*-1,temp.get(2)*-1);
+            objects.get(0).getChildObject().get(3).rotateObject(1.5f, 1f, 0f, 0f,15f);
+            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*1,temp.get(1)*1,temp.get(2)*1);
 
+            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*-1,temp2.get(1)*-1,temp2.get(2)*-1);
+            objects.get(0).getChildObject().get(4).rotateObject(1.5f, -1f, 0f, 0f,15f);
+            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*1,temp2.get(1)*1,temp2.get(2)*1);
 
+            objects.get(0).translateObject(0f,0f,0f);
 
             }
 
@@ -2710,6 +2711,7 @@ public class main {
             stateArray.replaceAll(Boolean -> true);
         }
 
+
         if (window.isKeyPressed(GLFW_KEY_L)){
 //            objects.get(0).rotateObject((float) Math.toRadians(7f), 0.0f, 1.0f, 0.0f);
             camera.addRotation((float) Math.toRadians(0f), (float) Math.toRadians(4f));
@@ -2738,6 +2740,7 @@ public class main {
         if (window.isKeyPressed(GLFW_KEY_E)){
             objects.get(1).rotateObject((float) Math.toRadians(7f), 0.0f, 0.0f, 0.0f);
         }
+
     }
     public void eyeRightDecor() {
         Vector3f tempCenterPoint;

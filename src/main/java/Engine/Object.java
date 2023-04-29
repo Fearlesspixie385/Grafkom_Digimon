@@ -30,6 +30,8 @@ public class Object extends ShaderProgram {
     Vector3f rotationWithoutParent = new Vector3f();
     Vector3f model1 = new Vector3f();
 
+    float degreeInc;
+    int Switch;
 
     public Object(List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, Vector4f color) {
         super(shaderModuleDataList);
@@ -44,6 +46,9 @@ public class Object extends ShaderProgram {
         model = new Matrix4f();
         childObject = new ArrayList<>();
         centerPoint = Arrays.asList(0f,0f,0f);
+
+        degreeInc = 0;
+        Switch = 0;
         setupVAOVBO();
     }
 
@@ -468,5 +473,27 @@ public class Object extends ShaderProgram {
         centerPoint.set(1,destTemp.y);
         centerPoint.set(2,destTemp.z);
         //System.out.println(centerPoint.get(0) + " " + centerPoint.get(1));
+    }
+
+    public void rotateObject(Float degree, Float x,Float y,Float z, Float limit){
+        System.out.println(degreeInc);
+        if (Switch == 1){
+            degree *= -1;
+        }
+        if (degreeInc >= limit){
+            Switch = 1;
+        }
+        if (degreeInc <= -limit){
+            Switch = 0;
+            degree *= -1;
+        }
+
+
+        degreeInc += degree;
+        model = new Matrix4f().rotate((float)Math.toRadians(degree),x,y,z).mul(new Matrix4f(model));
+        updateCenterPoint();
+        for(Object child:childObject){
+            child.rotateObject(degree,x,y,z,limit);
+        }
     }
 }
