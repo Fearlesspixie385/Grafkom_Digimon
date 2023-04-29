@@ -2268,6 +2268,7 @@ public class main {
         floor.translateObject(0f, -3f, 0f);
 
 
+        float platformWide = 2.5f, platformHeight = 0.3f, heightFromFloor = 1.2f, offset = 1.2f;
         //platform atas floor
         floor.getChildObject().add(new Sphere3(
                 Arrays.asList(
@@ -2280,11 +2281,12 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, 3f, 0.3f, 1f, true
+                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, platformWide, platformHeight, 1f, true
         ));
 
+
         tempCenterPoint = floor.updateCenterPointObject();
-        floor.getChildObject().get(0).translateObject(tempCenterPoint.x - 1f, tempCenterPoint.y + 1f, tempCenterPoint.z);
+        floor.getChildObject().get(0).translateObject(tempCenterPoint.x - offset, tempCenterPoint.y + heightFromFloor, tempCenterPoint.z);
 
         //Wall back
         environment.add(new Sphere2(
@@ -2339,11 +2341,11 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, 0.3f, 3f, 1f, true
+                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, platformHeight, platformWide, 1f, true
         ));
 
         tempCenterPoint = wallLeft.updateCenterPointObject();
-        wallLeft.getChildObject().get(0).translateObject(tempCenterPoint.x + 1f, tempCenterPoint.y + 1f, tempCenterPoint.z);
+        wallLeft.getChildObject().get(0).translateObject(tempCenterPoint.x + heightFromFloor, tempCenterPoint.y + offset, tempCenterPoint.z);
 
 
         //wall right
@@ -2380,11 +2382,11 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, 0.3f, 3f, 1f, true
+                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, platformHeight, platformWide, 1f, true
         ));
 
         tempCenterPoint = wallRight.updateCenterPointObject();
-        wallRight.getChildObject().get(0).translateObject(tempCenterPoint.x - 1f, tempCenterPoint.y - 1f, tempCenterPoint.z);
+        wallRight.getChildObject().get(0).translateObject(tempCenterPoint.x - heightFromFloor, tempCenterPoint.y - offset, tempCenterPoint.z);
 
 
         //roof
@@ -2419,11 +2421,11 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, 3f, 0.3f, 1f, true
+                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, platformWide, platformHeight, 1f, true
         ));
 
         tempCenterPoint = roof.updateCenterPointObject();
-        roof.getChildObject().get(0).translateObject(tempCenterPoint.x + 1f, tempCenterPoint.y - 1f, tempCenterPoint.z);
+        roof.getChildObject().get(0).translateObject(tempCenterPoint.x + offset, tempCenterPoint.y - heightFromFloor, tempCenterPoint.z);
 
 
     }
