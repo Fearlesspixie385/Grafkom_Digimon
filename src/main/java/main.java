@@ -1306,7 +1306,7 @@ public class main {
         objects.get(0).scaleObject(3f,3f,3f);
 
 
-//        code mouritus
+        //code mouritus
         //lower body
         objects.add(new Sphere3(
                 Arrays.asList(
@@ -2200,9 +2200,6 @@ public class main {
         jointArmLeft.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
         jointArmLeft.rotateObject((float) Math.toRadians(-55f), 0f, 0f, 1f);
         jointArmLeft.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
-
-        lowerBody.translateObject(0f, -0.2f, 0f);
-
 
         for (int i = 0; i < 3; i++) {
             valueArray.add(0.0);
