@@ -32,6 +32,15 @@ public class Sphere3 extends Circle {
         setupVAOVBO();
     }
 
+    public Sphere3(List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, Vector4f color, float centerpointX, float centerpointY, float rx, float ry, float rz, boolean b) {
+        super(shaderModuleDataList, vertices, color, centerpointX, centerpointY, rx, ry);
+        this.rz = rz;
+//        createSphere();
+        createBox();
+        setupVAOVBO();
+    }
+
+
     public void createQuadratic(int cases) {
 
 //        ArrayList<Vector3f> temp = new ArrayList<>();

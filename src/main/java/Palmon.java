@@ -813,7 +813,7 @@ public class Palmon {
             objects.get(0).getChildObject().get(5).translateObject(temp1.get(0), temp1.get(1), temp1.get(2));
         }
         //Evolve
-        if (window.isKeyPressed(GLFW_KEY_E)) {
+        if (window.isKeyPressed(GLFW_KEY_E) && !evolveFinish) {
             action = 0;
             startEvolve = true;
             hold = false;
@@ -877,18 +877,10 @@ public class Palmon {
         if(action == 0){
             //System.out.println(timer);
             inc = 5;
+            List<Float> temp1 = new ArrayList<>(objects.get(0).getCenterPoint());
+            objects.get(0).translateObject(-temp1.get(0), -temp1.get(1), -temp1.get(2));
             objects.get(0).rotateObject((float)Math.toRadians(inc), 0f, 1f, 0f);
-
-//            for(Object child:objects.get(0).getChildObject()) {
-//                List<Float> temp1 = new ArrayList<>(child.getCenterPoint());
-//                objects.get(0).getChildObject().get(5).translateObject(temp1.get(0) * -1, temp1.get(1) * -1, temp1.get(2) * -1);
-//                child.rotateObject((float)Math.toRadians(inc), 0f, -1f, 0f);
-//                objects.get(0).getChildObject().get(5).translateObject(temp1.get(0), temp1.get(1), temp1.get(2));
-//
-//                objects.get(0).getChildObject().get(5).translateObject(temp1.get(0) * -1, temp1.get(1) * -1, temp1.get(2) * -1);
-//                objects.get(0).getChildObject().get(5).rotateObject((float) Math.toRadians(5), 0f, 0f, 1f);
-//                objects.get(0).getChildObject().get(5).translateObject(temp1.get(0), temp1.get(1), temp1.get(2));
-//            }
+            objects.get(0).translateObject(temp1.get(0), temp1.get(1), temp1.get(2));
             timer += inc;
             if(timer > 715) {
                 //startEvolve = false;
@@ -950,7 +942,7 @@ public class Palmon {
 
             if(objects.get(0).getCenterPoint().get(1) <= -0.05f){
                 action = 3;
-                timer = 1;
+                timer = 0.9f;
             }
         }
         ///Transform to togemon with effects
@@ -958,17 +950,34 @@ public class Palmon {
             //Effect
             timer -= 0.1;
             objects.get(0).scaleObject(0.5f,0.5f,0.5f);
-
+            objects.get(0).translateObject(0f,-0.1f,0f);
             if(timer < 0){
                 action = 4;
-                timer = 1;
+                timer = 1.2f;
             }
         }
         if (action == 4){
             if(!evolveFinish) Togemon();
+            List<Float> temp1 = new ArrayList<>(objects.get(0).getCenterPoint());
             timer -= 0.1;
-            objects.get(1).scaleObject(0.7f, 0.7f, 0.7f);
+            objects.get(1).scaleObject(1.25f, 1.25f, 1.25f);
+            objects.get(1).translateObject(0f,0.005f,0f);
+            objects.get(1).translateObject(-temp1.get(0), -temp1.get(1), -temp1.get(2));
+            objects.get(1).rotateObject((float) Math.toRadians(60f), 0.0f, 1.0f, 0.0f);
+            objects.get(1).translateObject(temp1.get(0), temp1.get(1), temp1.get(2));
             if(timer < 0){
+                action = 5;
+                timer = 3.5f;
+            }
+        }
+
+        if(action == 5){
+            List<Float> temp1 = new ArrayList<>(objects.get(1).getCenterPoint());
+            objects.get(1).translateObject(-temp1.get(0), -temp1.get(1), -temp1.get(2));
+            objects.get(1).rotateObject((float) Math.toRadians(20f), 0.0f, 1.0f, 0.0f);
+            objects.get(1).translateObject(temp1.get(0), temp1.get(1), temp1.get(2));
+            timer -= 0.1;
+            if(timer < 0) {
                 hold = true;
                 action = -1;
             }
@@ -1480,7 +1489,8 @@ public class Palmon {
         objects.get(1).getChildObject().get(0).rotateObject((float)Math.toRadians(40f),0f,0f,-1f);
         objects.get(1).getChildObject().get(0).translateObject(-0.2f, 0.7f, 0.0f);
 
-        objects.get(1).translateObject(0.2f, 0.7f, 0.0f);
+        //objects.get(1).translateObject(0.2f, 0.7f, 0.0f);
+        objects.get(1).scaleObject(0.02f, 0.02f, 0.02f);
         evolveFinish = true;
 
         System.out.println("Hi");

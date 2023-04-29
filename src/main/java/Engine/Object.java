@@ -27,6 +27,7 @@ public class Object extends ShaderProgram {
     //pos before animate
     Vector3f pos = new Vector3f();
     Vector3f rotation = new Vector3f();
+    Vector3f rotationWithoutParent = new Vector3f();
     Vector3f model1 = new Vector3f();
 
 
@@ -42,6 +43,7 @@ public class Object extends ShaderProgram {
 
         model = new Matrix4f();
         childObject = new ArrayList<>();
+        centerPoint = Arrays.asList(0f,0f,0f);
         setupVAOVBO();
     }
 
@@ -244,22 +246,23 @@ public class Object extends ShaderProgram {
             if (offsetx >= 360f) {
                 offsetx -= 360;
             }
-            rotateObject(-rotation.z, 0f, 0f, 1f);
-            rotateObject(-rotation.y, 0f, 1f, 0f);
-            rotateObject(-rotation.x, 1f, 0f, 0f);
+            rotateObject(-rotation.z, 0f,0f,1f);
+            rotateObject(-rotation.y, 0f,1f,0f);
+            rotateObject(-rotation.x, 1f,0f,0f);
 
             model = new Matrix4f().rotate(degree, offsetx, offsety, offsetz).mul(new Matrix4f(model));
-            translateObject(1f, 0f, 0f);
+            translateObject(1f,0f,0f);
             draw(camera, projection);
-            translateObject(-1f, 0f, 0f);
+            translateObject(-1f,0f,0f);
 
             for (Object child : childObject) {
                 child.rotateObjectAnimateUtil(degree, offsetx, offsety, offsetz);
             }
-            rotateObject(rotation.x, 1f, 0f, 0f);
-            rotateObject(rotation.y, 0f, 1f, 0f);
-            rotateObject(rotation.z, 0f, 0f, 1f);
+            rotateObject(rotation.x, 1f,0f,0f);
+            rotateObject(rotation.y, 0f,1f,0f);
+            rotateObject(rotation.z, 0f,0f,1f);
             rotation.x += degree;
+            rotationWithoutParent.x += degree;
         }
 
         if (offsety == 1f) {
@@ -267,41 +270,45 @@ public class Object extends ShaderProgram {
             if (offsety >= 360f) {
                 offsety -= 360;
             }
-            rotateObject(-rotation.z, 0f, 0f, 1f);
-            rotateObject(-rotation.x, 1f, 0f, 0f);
-            rotateObject(-rotation.y, 0f, 1f, 0f);
+            rotateObject(-rotation.z, 0f,0f,1f);
+            rotateObject(-rotation.x, 1f,0f,0f);
+            rotateObject(-rotation.y, 0f,1f,0f);
             model = new Matrix4f().rotate(degree, offsetx, offsety, offsetz).mul(new Matrix4f(model));
-            translateObject(1f, 0f, 0f);
+            translateObject(1f,0f,0f);
             draw(camera, projection);
-            translateObject(-1f, 0f, 0f);
+            translateObject(-1f,0f,0f);
 
             for (Object child : childObject) {
                 child.rotateObjectAnimateUtil(degree, offsetx, offsety, offsetz);
             }
-            rotateObject(rotation.y, 0f, 1f, 0f);
-            rotateObject(rotation.x, 1f, 0f, 0f);
-            rotateObject(rotation.z, 0f, 0f, 1f);
+            rotateObject(rotation.y, 0f,1f,0f);
+            rotateObject(rotation.x, 1f,0f,0f);
+            rotateObject(rotation.z, 0f,0f,1f);
             rotation.y += degree;
+            rotationWithoutParent.y += degree;
         }
 
         if (offsetz == 1f) {
             if (offsetz >= 360f) {
                 offsetz -= 360;
             }
-            rotateObject(-rotation.z, 0f, 0f, 1f);
-            rotateObject(-rotation.y, 0f, 1f, 0f);
-            rotateObject(-rotation.x, 1f, 0f, 0f);
+            rotateObject(-rotation.y, 0f,1f,0f);
+            rotateObject(-rotation.x, 1f,0f,0f);
+            rotateObject(-rotation.z, 0f,0f,1f);
+
             model = new Matrix4f().rotate(degree, offsetx, offsety, offsetz).mul(new Matrix4f(model));
-            translateObject(1f, 0f, 0f);
+            translateObject(1f,0f,0f);
             draw(camera, projection);
-            translateObject(-1f, 0f, 0f);
+            translateObject(-1f,0f,0f);
             for (Object child : childObject) {
                 child.rotateObjectAnimateUtil(degree, offsetx, offsety, offsetz);
             }
-            rotateObject(rotation.x, 1f, 0f, 0f);
-            rotateObject(rotation.y, 0f, 1f, 0f);
-            rotateObject(rotation.z, 0f, 0f, 1f);
+            rotateObject(rotation.z, 0f,0f,1f);
+            rotateObject(rotation.x, 1f,0f,0f);
+            rotateObject(rotation.y, 0f,1f,0f);
+
             rotation.z += degree;
+            rotationWithoutParent.z += degree;
         }
 
 
@@ -339,13 +346,16 @@ public class Object extends ShaderProgram {
     public void resetPos() {
         Vector3f tempCenterPoint = updateCenterPointObject();
         translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
-        rotateObject(-rotation.x, 1f, 0f, 0f);
-        rotateObject(-rotation.y, 0f, 1f, 0f);
-        rotateObject(-rotation.z, 0f, 0f, 1f);
+        rotateObject(-rotationWithoutParent.x, 1f, 0f, 0f);
+        rotateObject(-rotationWithoutParent.y, 0f, 1f, 0f);
+        rotateObject(-rotationWithoutParent.z, 0f, 0f, 1f);
         translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
-        rotation = new Vector3f();
-        translateObject(-model1.x, -model1.y, -model1.z);
-        model1 = new Vector3f();
+        rotationWithoutParent = new Vector3f();
+        if (model1.x != 0 || model1.y != 0 || model1.z != 0) {
+            translateObject(-model1.x, -model1.y, -model1.z);
+            model1 = new Vector3f();
+        }
+
     }
 
     public void resetPosChildren() {

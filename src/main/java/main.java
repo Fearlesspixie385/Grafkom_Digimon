@@ -1,6 +1,5 @@
 import Engine.*;
 import Engine.Object;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL;
@@ -23,13 +22,7 @@ public class main {
     private ArrayList<Object> environment = new ArrayList<>();
 
     private ArrayList<Object> objects = new ArrayList<>();
-    private ArrayList<Object> objectsRectangle = new ArrayList<>();
     private ArrayList<Object> objectPointControl = new ArrayList<>();
-    private ArrayList<Object> objectPointCurve = new ArrayList<>();
-    private boolean dragDrop = false;
-    private float posX = 0.0f;
-    private float posY = 0.0f;
-    private float posZ = 2.0f;
 
     private Object lowerBody;
     private Object upperBody;
@@ -2139,6 +2132,44 @@ public class main {
         jointFootLeft.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y -0.03f, tempCenterPoint.z + 0.033f);
 
 
+        //tail
+        objectPointControl.clear();
+        objectPointControl.add(new Object(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
+        ));
+
+        lowerBody.getChildObject().add(new Curve2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(1, 1, 1, 1.0f), 9
+        ));
+        Object tail = lowerBody.getChildObject().get(intlowerBody);
+        intlowerBody++;
+
+
+        move2 = 0.1f;
+        move3 = 0.14f;
+        tempCenterPoint = lowerBody.updateCenterPointObject();
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x, tempCenterPoint.y + move2, tempCenterPoint.z - move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x - 0.5f, tempCenterPoint.y + move2, tempCenterPoint.z - 0.6f - move3));
+        objectPointControl.get(0).addVertices(new Vector3f(tempCenterPoint.x + 0.2f, tempCenterPoint.y + 1f + move2, tempCenterPoint.z - move3));
+        objectPointControl.get(0).bezierCurve(tail);
 
 
 
@@ -2154,6 +2185,14 @@ public class main {
 
         lowerBody.translateObject(0f, -0.2f, 0f);
 
+        for (int i = 0; i < 3; i++) {
+            valueArray.add(0.0);
+        }
+
+        for (int i = 0; i < 6; i++) {
+            stateArray.add(true);
+        }
+
         tempCenterPoint = objects.get(1).updateCenterPointObject();
 
         lowerBody.translateObject(tempCenterPoint.x + 1f, tempCenterPoint.y, tempCenterPoint.z + 1f);
@@ -2163,23 +2202,7 @@ public class main {
 
 
         //environment
-        environment.add(new Sphere2(
-                Arrays.asList(
-                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
-                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
-                ),
-                new ArrayList<>(),
-                new Vector4f(0.7f, 0.69f, 0.62f, 1.0f),
-                Arrays.asList(0.0f, 0.0f, 0.0f),
-                20f,
-                0.02f,
-                20f,
-                108,
-                72,
-                180f
-        ));
-        environment.get(0).translateObject(0f, -3f, 0f);
-//        environment.add(new Sphere3(
+        //        environment.add(new Sphere3(
 //                Arrays.asList(
 //                        //shaderFile lokasi menyesuaikan objectnya
 //                        new ShaderProgram.ShaderModuleData
@@ -2205,11 +2228,120 @@ public class main {
 //                new ArrayList<>(),
 //                new Vector4f(0.510f, 0.500f, 0.500f, 0f), 0.0f, 0.0f, 100, 100, 90, 4
 //        ));
+        //Lantai
+        environment.add(new Sphere2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.7f, 0.69f, 0.62f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
+                10f,
+                0.02f,
+                2f,
+                108,
+                72,
+                180f
+        ));
+        Object floor = environment.get(0);
+        floor.translateObject(0f, -3f, 0f);
 
-        tempCenterPoint = lowerBody.updateCenterPointObject();
-        //environment.get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y - 1000f, tempCenterPoint.z);
-//        objects.get(0).translateObject(tempCenterPoint.x - 1f, tempCenterPoint.y , tempCenterPoint.z);
-//        objects.get(1).translateObject(tempCenterPoint.x + 3f, tempCenterPoint.y + 1f, tempCenterPoint.z + 1f);
+        //platform atas floor
+        floor.getChildObject().add(new Sphere3(
+                Arrays.asList(
+                        //shaderFile lokasi menyesuaikan objectnya
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.vert"
+                                        , GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData
+                                ("resources/shaders/scene.frag"
+                                        , GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.996f, 0.933f, 0.015f, 0f), 0.0f, 0.0f, 0.2f, 0.2f, 0.2f, true
+        ));
+
+        tempCenterPoint = floor.updateCenterPointObject();
+        floor.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y + 1f, tempCenterPoint.z + 1f);
+
+
+
+        //Wall
+        environment.add(new Sphere2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.49f, 0.62f, 0.675f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
+                10f,
+                8f,
+                0.005f,
+                108,
+                72,
+                180f
+        ));
+        environment.get(1).translateObject(0f, -2f, -1f);
+
+        environment.add(new Sphere2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.49f, 0.62f, 0.675f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
+                5f,
+                1.5f,
+                .005f,
+                108,
+                72,
+                180f
+        ));
+
+        environment.get(2).rotateObject((float) Math.toRadians(270f), 0f, 1f, 0f);
+        environment.get(2).translateObject(-2.5f, 1f, 0.0f);
+
+
+        environment.add(new Sphere2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.49f, 0.62f, 0.675f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
+                5f,
+                1.5f,
+                .005f,
+                108,
+                72,
+                180f
+        ));
+
+        environment.get(3).rotateObject((float) Math.toRadians(90f), 0f, 1f, 0f);
+        environment.get(3).translateObject(2.5f, 1f, 0.0f);
+
+        //Roof
+        environment.add(new Sphere2(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(),
+                new Vector4f(0.7f, 0.69f, 0.62f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
+                5f,
+                0.02f,
+                5f,
+                108,
+                72,
+                180f
+        ));
+        environment.get(4).translateObject(0f, 3f, 0f);
+
         objects.get(0).translateObject(0f,-1f,0f);
         objects.get(1).translateObject(0f,-1f,0f);
         //environment.get(1).translateObject(tempCenterPoint.x, tempCenterPoint.y + 10f, tempCenterPoint.z);
@@ -2370,7 +2502,7 @@ public class main {
                     valueArray.set(0, valueArray.get(0) - 1);
                 } else {
                     stateArray.set(0, false);
-                    new Rotate().z(jointHead, 0.2f);
+                    rotate1.z(jointHead, 0.2f);
                     valueArray.set(0, valueArray.get(0) + 1);
                 }
 
@@ -2393,9 +2525,8 @@ public class main {
                     rotate1.x(jointArmLeft, move);
 
                     rotate1.x(jointLegRight, move);
-                    rotate1.x(jointFootRight, -move);
                     rotate1.x(jointLegLeft, -move);
-                    rotate1.x(jointFootLeft, move);
+
                     valueArray.set(1, valueArray.get(1) + move);
 
                 } else {
@@ -2405,9 +2536,18 @@ public class main {
                     rotate1.x(jointArmLeft, -move);
 
                     rotate1.x(jointLegRight, -move);
-                    rotate1.x(jointFootRight, move);
                     rotate1.x(jointLegLeft, move);
-                    rotate1.x(jointFootLeft, -move);
+
+
+                    if (valueArray.get(1) > 18) {
+                        rotate1.x(jointFootLeft, move * 1.3f);
+
+                    }
+                    else {
+                        rotate1.x(jointFootLeft, -move);
+
+                    }
+
                     valueArray.set(1, valueArray.get(1) - move);
                 }
 
@@ -2422,9 +2562,8 @@ public class main {
                     rotate1.x(jointHandLeft, -move1);
 
                     rotate1.x(jointLegRight, -move);
-                    rotate1.x(jointFootRight, move);
                     rotate1.x(jointLegLeft, move);
-                    rotate1.x(jointFootLeft, -move);
+
                     valueArray.set(1, valueArray.get(1) - move);
                 } else {
                     stateArray.set(2, false);
@@ -2433,15 +2572,24 @@ public class main {
                     rotate1.x(jointHandLeft, move1);
 
                     rotate1.x(jointLegRight, move);
-                    rotate1.x(jointFootRight, -move);
                     rotate1.x(jointLegLeft, -move);
-                    rotate1.x(jointFootLeft, move);
+
+
+                    if (valueArray.get(1) < -18) {
+                        rotate1.x(jointFootRight, move * 1.3f);
+                    }
+                    else {
+
+                        rotate1.x(jointFootRight, -move);
+                    }
                     valueArray.set(1, valueArray.get(1) + move);
                 }
 
                 if (valueArray.get(1) == 0) {
                     stateArray.set(2, true);
                     stateArray.set(3, true);
+                    jointFootRight.resetPos();
+                    jointFootLeft.resetPos();
                 }
             }
         }
