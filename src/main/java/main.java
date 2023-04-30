@@ -15,15 +15,19 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class main {
     Camera camera = new Camera();
-
+    //0 Billy, 1 Juven, 2 Mou
+    //state 1 walk, 2 jump
+    float kaki = 0;
+    float tangan = 0;
+    float temp = 0;
+    float tempo = 0;
+    float jalan = 0;
+    Rotate rotate1 = new Rotate();
     private Window window = new Window(800, 800, "Hello World");
     Projection projection = new Projection(window.getWidth(), window.getHeight());
-
     private ArrayList<Object> environment = new ArrayList<>();
-
     private ArrayList<Object> objects = new ArrayList<>();
     private ArrayList<Object> objectPointControl = new ArrayList<>();
-
     private Object lowerBody;
     private Object upperBody;
     private Object head;
@@ -39,7 +43,6 @@ public class main {
     private Object jointLegRight;
     private Object jointFootLeft;
     private Object jointFootRight;
-
     private ArrayList<Double> valueArray = new ArrayList<>();
     private ArrayList<Boolean> stateArray = new ArrayList<>();
 
@@ -47,14 +50,6 @@ public class main {
 
         new main().run();
     }
-
-    float kaki=0;
-    float tangan=0;
-    float temp=0;
-    float tempo=0;
-
-    float jalan=0;
-
 
     public void init() {
         window.init();
@@ -73,16 +68,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.15f,
                         0.1f,
                         0.15f,
                         0
                 )
         );
-        objects.get(0).translateObject(0.0f,-0.08f,0.025f);
-        objects.get(0).rotateObject((float)Math.toRadians(0.1), -90.0f, 0f, 0f);
+        objects.get(0).translateObject(0.0f, -0.08f, 0.025f);
+        objects.get(0).rotateObject((float) Math.toRadians(0.1), -90.0f, 0f, 0f);
 
 
         objects.get(0).getChildObject().add(new Sphere2(
@@ -95,16 +90,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.15f,
                         0.1f,
                         0.15f,
                         0
                 )
         );
-        objects.get(0).getChildObject().get(0).translateObject(0.0f,-0.08f,-0.025f);
-        objects.get(0).getChildObject().get(0).rotateObject((float)Math.toRadians(0.1), 0.0f, 0f, 0f);
+        objects.get(0).getChildObject().get(0).translateObject(0.0f, -0.08f, -0.025f);
+        objects.get(0).getChildObject().get(0).rotateObject((float) Math.toRadians(0.1), 0.0f, 0f, 0f);
 
         objects.get(0).getChildObject().add(new Sphere2(
                         Arrays.asList(
@@ -116,16 +111,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.15f,
                         0.12f,
                         0.15f,
                         0
                 )
         );
-        objects.get(0).getChildObject().get(1).translateObject(0.0f,-0.09f,0f);
-        objects.get(0).getChildObject().get(1).rotateObject((float)Math.toRadians(0.1), -45f, 0f, 0f);
+        objects.get(0).getChildObject().get(1).translateObject(0.0f, -0.09f, 0f);
+        objects.get(0).getChildObject().get(1).rotateObject((float) Math.toRadians(0.1), -45f, 0f, 0f);
 
         //Kepala
         objects.get(0).getChildObject().add(new Sphere2(
@@ -138,8 +133,8 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.25f,
                         0.22f,
                         0.18f,
@@ -147,7 +142,7 @@ public class main {
                 )
         );
         //objects.get(0).scaleObject(0.6f,0.1f,0.1f);
-        objects.get(0).getChildObject().get(2).translateObject(0.0f,0.2f,0.0f);
+        objects.get(0).getChildObject().get(2).translateObject(0.0f, 0.2f, 0.0f);
 
         //Mata
         objects.get(0).getChildObject().get(2).getChildObject().add(new Sphere2(
@@ -160,16 +155,16 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.03f,0.27f,0.11f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(0.03f, 0.27f, 0.11f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.06f,
                 0.02f,
                 0.05f,
                 0
         ));
         //objects.get(0).getChildObject().get(0).translateObject(-0.1f,0.20f,-0.2f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(0).translateObject(0f,0.20f,-0.215f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(0).rotateObject((float)Math.toRadians(35), 0f, 1f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(0).translateObject(0f, 0.20f, -0.215f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(0).rotateObject((float) Math.toRadians(35), 0f, 1f, 0f);
 
         objects.get(0).getChildObject().get(2).getChildObject().get(0).getChildObject().add(new Sphere2(
                 Arrays.asList(
@@ -181,16 +176,16 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(1f,1f,1f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(1f, 1f, 1f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.02f,
                 0.02f,
                 0.02f,
                 0
         ));
         //objects.get(0).getChildObject().get(0).translateObject(-0.1f,0.20f,-0.2f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(0).getChildObject().get(0).translateObject(0f,0.21f,-0.225f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(0).getChildObject().get(0).rotateObject((float)Math.toRadians(35), 0f, 1f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(0).getChildObject().get(0).translateObject(0f, 0.21f, -0.225f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(0).getChildObject().get(0).rotateObject((float) Math.toRadians(35), 0f, 1f, 0f);
 
         objects.get(0).getChildObject().get(2).getChildObject().add(new Sphere2(
                 Arrays.asList(
@@ -202,15 +197,15 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.03f,0.27f,0.11f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(0.03f, 0.27f, 0.11f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.06f,
                 0.02f,
                 0.05f,
                 0
         ));
-        objects.get(0).getChildObject().get(2).getChildObject().get(1).translateObject(0f,0.20f,-0.215f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(1).rotateObject((float)Math.toRadians(35), 0f, -1f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(1).translateObject(0f, 0.20f, -0.215f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(1).rotateObject((float) Math.toRadians(35), 0f, -1f, 0f);
 
 
         objects.get(0).getChildObject().get(2).getChildObject().get(0).getChildObject().add(new Sphere2(
@@ -223,16 +218,16 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(1f,1f,1f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(1f, 1f, 1f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.02f,
                 0.02f,
                 0.02f,
                 0
         ));
         //objects.get(0).getChildObject().get(0).translateObject(-0.1f,0.20f,-0.2f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(0).getChildObject().get(1).translateObject(-0.02f,0.21f,-0.225f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(0).getChildObject().get(1).rotateObject((float)Math.toRadians(35), 0f, -1f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(0).getChildObject().get(1).translateObject(-0.02f, 0.21f, -0.225f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(0).getChildObject().get(1).rotateObject((float) Math.toRadians(35), 0f, -1f, 0f);
 
 
         //Hair
@@ -246,8 +241,8 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.019f,
                 0.019f,
                 -0.02f,
@@ -255,8 +250,8 @@ public class main {
                 -7,
                 0
         ));
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).scaleObject(1.0f,1.0f,1.0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).translateObject(0.0f,0.27f,0.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).scaleObject(1.0f, 1.0f, 1.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).translateObject(0.0f, 0.27f, 0.0f);
 
         objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().add(new Sphere2(
                 Arrays.asList(
@@ -268,8 +263,8 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.015f,
                 0.0025f,
                 -0.03f,
@@ -277,9 +272,9 @@ public class main {
                 -7,
                 0
         ));
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(0).scaleObject(1.0f,1.0f,1.0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(0).translateObject(0.0f,0.0f,-0.36f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(0).rotateObject((float)Math.toRadians(45), 1f, 0f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(0).scaleObject(1.0f, 1.0f, 1.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(0).translateObject(0.0f, 0.0f, -0.36f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(0).rotateObject((float) Math.toRadians(45), 1f, 0f, 0f);
 
         objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().add(new Sphere2(
                 Arrays.asList(
@@ -291,8 +286,8 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.015f,
                 0.0025f,
                 -0.03f,
@@ -300,10 +295,10 @@ public class main {
                 -7,
                 0
         ));
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(1).scaleObject(1.0f,1.0f,1.0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(1).translateObject(0.0f,0.0f,-0.36f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(1).rotateObject((float)Math.toRadians(45), 1f, 0f, 0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(1).rotateObject((float)Math.toRadians(72), 0f, 1f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(1).scaleObject(1.0f, 1.0f, 1.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(1).translateObject(0.0f, 0.0f, -0.36f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(1).rotateObject((float) Math.toRadians(45), 1f, 0f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(1).rotateObject((float) Math.toRadians(72), 0f, 1f, 0f);
 
         objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().add(new Sphere2(
                 Arrays.asList(
@@ -315,8 +310,8 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.015f,
                 0.0025f,
                 -0.03f,
@@ -324,10 +319,10 @@ public class main {
                 -7,
                 0
         ));
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(2).scaleObject(1.0f,1.0f,1.0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(2).translateObject(0.0f,0.0f,-0.36f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(2).rotateObject((float)Math.toRadians(45), 1f, 0f, 0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(2).rotateObject((float)Math.toRadians(144), 0f, 1f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(2).scaleObject(1.0f, 1.0f, 1.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(2).translateObject(0.0f, 0.0f, -0.36f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(2).rotateObject((float) Math.toRadians(45), 1f, 0f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(2).rotateObject((float) Math.toRadians(144), 0f, 1f, 0f);
 
         objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().add(new Sphere2(
                 Arrays.asList(
@@ -339,8 +334,8 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.015f,
                 0.0025f,
                 -0.03f,
@@ -348,10 +343,10 @@ public class main {
                 -7,
                 0
         ));
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(3).scaleObject(1.0f,1.0f,1.0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(3).translateObject(0.0f,0.0f,-0.36f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(3).rotateObject((float)Math.toRadians(45), 1f, 0f, 0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(3).rotateObject((float)Math.toRadians(216), 0f, 1f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(3).scaleObject(1.0f, 1.0f, 1.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(3).translateObject(0.0f, 0.0f, -0.36f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(3).rotateObject((float) Math.toRadians(45), 1f, 0f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(3).rotateObject((float) Math.toRadians(216), 0f, 1f, 0f);
 
         objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().add(new Sphere2(
                 Arrays.asList(
@@ -363,8 +358,8 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.015f,
                 0.0025f,
                 -0.03f,
@@ -372,10 +367,10 @@ public class main {
                 -7,
                 0
         ));
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(4).scaleObject(1.0f,1.0f,1.0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(4).translateObject(0.0f,0.0f,-0.36f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(4).rotateObject((float)Math.toRadians(45), 1f, 0f, 0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(4).rotateObject((float)Math.toRadians(288), 0f, 1f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(4).scaleObject(1.0f, 1.0f, 1.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(4).translateObject(0.0f, 0.0f, -0.36f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(4).rotateObject((float) Math.toRadians(45), 1f, 0f, 0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(2).getChildObject().get(4).rotateObject((float) Math.toRadians(288), 0f, 1f, 0f);
 
 
         objects.get(0).getChildObject().get(2).getChildObject().add(new Sphere2(
@@ -388,15 +383,15 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(1.0f,0.84f,0.0f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(1.0f, 0.84f, 0.0f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.01f,
                 0.01f,
                 0.2f,
                 4
         ));
-        objects.get(0).getChildObject().get(2).getChildObject().get(3).scaleObject(1.0f,1.0f,1.0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(3).translateObject(0.0f,0.27f,0.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(3).scaleObject(1.0f, 1.0f, 1.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(3).translateObject(0.0f, 0.27f, 0.0f);
 
         objects.get(0).getChildObject().get(2).getChildObject().add(new Sphere2(
                 Arrays.asList(
@@ -408,16 +403,16 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(1.0f,0.84f,0.0f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(1.0f, 0.84f, 0.0f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.01f,
                 0.01f,
                 0.04f,
                 4
         ));
-        objects.get(0).getChildObject().get(2).getChildObject().get(4).scaleObject(1.0f,1.0f,1.0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(4).translateObject(-0.15f,0.44f,0.0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(4).rotateObject((float)Math.toRadians(20), 0.0f, 0f, -1f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(4).scaleObject(1.0f, 1.0f, 1.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(4).translateObject(-0.15f, 0.44f, 0.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(4).rotateObject((float) Math.toRadians(20), 0.0f, 0f, -1f);
         objects.get(0).getChildObject().get(2).getChildObject().add(new Sphere2(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData(
@@ -428,15 +423,15 @@ public class main {
                                 , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(1.0f,0.0f,0.0f,1.0f),
-                Arrays.asList(0.0f,0.0f,0.0f),
+                new Vector4f(1.0f, 0.0f, 0.0f, 1.0f),
+                Arrays.asList(0.0f, 0.0f, 0.0f),
                 0.03f,
                 0.01f,
                 0.03f,
                 0
         ));
-        objects.get(0).getChildObject().get(2).getChildObject().get(5).scaleObject(1.0f,1f,1.0f);
-        objects.get(0).getChildObject().get(2).getChildObject().get(5).translateObject(0.0f,0.5f,0.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(5).scaleObject(1.0f, 1f, 1.0f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(5).translateObject(0.0f, 0.5f, 0.0f);
 
         //Mulut
 //        objects.get(0).getChildObject().get(2).getChildObject().add(new kerucut(
@@ -464,7 +459,7 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0f,0.0f,0.0f,1.0f), true
+                        new Vector4f(0f, 0.0f, 0.0f, 1.0f), true
                 )
         );
         objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(-0.125f, 0.1f, 0.03f));
@@ -474,7 +469,7 @@ public class main {
         objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.04f, 0.075f, 0.0f));
         objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.08f, 0.05f, 0.0f));
         objects.get(0).getChildObject().get(2).getChildObject().get(6).addVertices(new Vector3f(0.125f, 0.1f, 0.03f));
-        objects.get(0).getChildObject().get(2).getChildObject().get(6).translateObject(0f,-0f,-0.17f);
+        objects.get(0).getChildObject().get(2).getChildObject().get(6).translateObject(0f, -0f, -0.17f);
 
         //Kaki
         objects.get(0).getChildObject().add(new Sphere2(
@@ -487,15 +482,15 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         -0.025f,
                         -0.025f,
                         0.07f,
                         1
                 )
         );
-        objects.get(0).getChildObject().get(3).translateObject(-0.075f,-0.25f,0.0f);
+        objects.get(0).getChildObject().get(3).translateObject(-0.075f, -0.25f, 0.0f);
 
 
         objects.get(0).getChildObject().add(new Sphere2(
@@ -508,16 +503,15 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.025f,
                         0.025f,
                         0.07f,
                         1
                 )
         );
-        objects.get(0).getChildObject().get(4).translateObject(0.075f,-0.25f,0.0f);
-
+        objects.get(0).getChildObject().get(4).translateObject(0.075f, -0.25f, 0.0f);
 
 
         // Right hand
@@ -531,16 +525,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.03f,
                         0.04f,
                         0.1f,
                         0
                 )
         );
-        objects.get(0).getChildObject().get(5).translateObject(-0.11f,-0.11f,0.0f);
-        objects.get(0).getChildObject().get(5).rotateObject((float)Math.toRadians(0.2), 0.0f, 0f, -90f);
+        objects.get(0).getChildObject().get(5).translateObject(-0.11f, -0.11f, 0.0f);
+        objects.get(0).getChildObject().get(5).rotateObject((float) Math.toRadians(0.2), 0.0f, 0f, -90f);
 
         objects.get(0).getChildObject().get(5).getChildObject().add(new Sphere2(
                         Arrays.asList(
@@ -552,16 +546,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.04f,
                         0.09f,
                         0.18f,
                         0
                 )
         );
-        objects.get(0).getChildObject().get(5).getChildObject().get(0).translateObject(-0.13f,-0.23f,0.0f);
-        objects.get(0).getChildObject().get(5).getChildObject().get(0).rotateObject((float)Math.toRadians(0.2), 0.0f, 0f, -40f);
+        objects.get(0).getChildObject().get(5).getChildObject().get(0).translateObject(-0.13f, -0.23f, 0.0f);
+        objects.get(0).getChildObject().get(5).getChildObject().get(0).rotateObject((float) Math.toRadians(0.2), 0.0f, 0f, -40f);
 
         objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().add(new Sphere2(
                         Arrays.asList(
@@ -573,16 +567,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.005f,
                         0.005f,
                         0.02f,
-                        0,-5,0
+                        0, -5, 0
                 )
         );
-        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(0).translateObject(0.15f,0.45f,-0.045f);
-        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(0).rotateObject((float)Math.toRadians(-185), 0.0f, 0f, 1f);
+        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(0).translateObject(0.15f, 0.45f, -0.045f);
+        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(0).rotateObject((float) Math.toRadians(-185), 0.0f, 0f, 1f);
 
         objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().add(new Sphere2(
                         Arrays.asList(
@@ -594,16 +588,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.005f,
                         0.005f,
                         0.02f,
-                        0,-5,0
+                        0, -5, 0
                 )
         );
-        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(1).translateObject(0.165f,0.45f,0.0f);
-        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(1).rotateObject((float)Math.toRadians(-185), 0.0f, 0f, 1f);
+        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(1).translateObject(0.165f, 0.45f, 0.0f);
+        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(1).rotateObject((float) Math.toRadians(-185), 0.0f, 0f, 1f);
 
         objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().add(new Sphere2(
                         Arrays.asList(
@@ -615,16 +609,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.005f,
                         0.005f,
                         0.02f,
-                        0,-5,0
+                        0, -5, 0
                 )
         );
-        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(2).translateObject(0.15f,0.45f,0.045f);
-        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(2).rotateObject((float)Math.toRadians(-185), 0.0f, 0f, 1f);
+        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(2).translateObject(0.15f, 0.45f, 0.045f);
+        objects.get(0).getChildObject().get(5).getChildObject().get(0).getChildObject().get(2).rotateObject((float) Math.toRadians(-185), 0.0f, 0f, 1f);
 
         //Left hand
         objects.get(0).getChildObject().add(new Sphere2(
@@ -637,16 +631,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.03f,
                         0.04f,
                         0.1f,
                         0
                 )
         );
-        objects.get(0).getChildObject().get(6).translateObject(0.11f,-0.11f,0.0f);
-        objects.get(0).getChildObject().get(6).rotateObject((float)Math.toRadians(0.2), 0.0f, 0f, 90f);
+        objects.get(0).getChildObject().get(6).translateObject(0.11f, -0.11f, 0.0f);
+        objects.get(0).getChildObject().get(6).rotateObject((float) Math.toRadians(0.2), 0.0f, 0f, 90f);
 
         objects.get(0).getChildObject().get(6).getChildObject().add(new Sphere2(
                         Arrays.asList(
@@ -658,16 +652,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.04f,
                         0.09f,
                         0.18f,
                         0
                 )
         );
-        objects.get(0).getChildObject().get(6).getChildObject().get(0).translateObject(0.13f,-0.23f,0.0f);
-        objects.get(0).getChildObject().get(6).getChildObject().get(0).rotateObject((float)Math.toRadians(0.2), 0.0f, 0f, 40f);
+        objects.get(0).getChildObject().get(6).getChildObject().get(0).translateObject(0.13f, -0.23f, 0.0f);
+        objects.get(0).getChildObject().get(6).getChildObject().get(0).rotateObject((float) Math.toRadians(0.2), 0.0f, 0f, 40f);
 
         objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().add(new Sphere2(
                         Arrays.asList(
@@ -679,16 +673,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.005f,
                         0.005f,
                         0.02f,
-                        0,-5,0
+                        0, -5, 0
                 )
         );
-        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(0).translateObject(-0.15f,0.45f,-0.045f);
-        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(0).rotateObject((float)Math.toRadians(185), 0.0f, 0f, 1f);
+        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(0).translateObject(-0.15f, 0.45f, -0.045f);
+        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(0).rotateObject((float) Math.toRadians(185), 0.0f, 0f, 1f);
 
         objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().add(new Sphere2(
                         Arrays.asList(
@@ -700,16 +694,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.005f,
                         0.005f,
                         0.02f,
-                        0,-5,0
+                        0, -5, 0
                 )
         );
-        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(1).translateObject(-0.165f,0.45f,0.0f);
-        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(1).rotateObject((float)Math.toRadians(185), 0.0f, 0f, 1f);
+        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(1).translateObject(-0.165f, 0.45f, 0.0f);
+        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(1).rotateObject((float) Math.toRadians(185), 0.0f, 0f, 1f);
 
         objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().add(new Sphere2(
                         Arrays.asList(
@@ -721,16 +715,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.42f,0.09f,0.32f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.42f, 0.09f, 0.32f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.005f,
                         0.005f,
                         0.02f,
-                        0,-5,0
+                        0, -5, 0
                 )
         );
-        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(2).translateObject(-0.15f,0.45f,0.045f);
-        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(2).rotateObject((float)Math.toRadians(185), 0.0f, 0f, 1f);
+        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(2).translateObject(-0.15f, 0.45f, 0.045f);
+        objects.get(0).getChildObject().get(6).getChildObject().get(0).getChildObject().get(2).rotateObject((float) Math.toRadians(185), 0.0f, 0f, 1f);
 
         //Ekor
         objects.get(0).getChildObject().add(new Sphere2(
@@ -743,16 +737,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.005f,
                         0.006f,
                         0.002f,
-                        1,-7,0
+                        1, -7, 0
                 )
         );
-        objects.get(0).getChildObject().get(7).translateObject(0f,-0.267f,-0.10f);
-        objects.get(0).getChildObject().get(7).rotateObject((float)Math.toRadians(-70), 1.0f, 0f, 0f);
+        objects.get(0).getChildObject().get(7).translateObject(0f, -0.267f, -0.10f);
+        objects.get(0).getChildObject().get(7).rotateObject((float) Math.toRadians(-70), 1.0f, 0f, 0f);
 
         objects.get(0).getChildObject().get(7).getChildObject().add(new Sphere2(
                         Arrays.asList(
@@ -764,16 +758,16 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.004f,
                         0.005f,
                         0.003f,
-                        1,-7,0
+                        1, -7, 0
                 )
         );
-        objects.get(0).getChildObject().get(7).getChildObject().get(0).translateObject(0f,-0.215f,-0.25f);
-        objects.get(0).getChildObject().get(7).getChildObject().get(0).rotateObject((float)Math.toRadians(-125), 1.0f, 0f, 0f);
+        objects.get(0).getChildObject().get(7).getChildObject().get(0).translateObject(0f, -0.215f, -0.25f);
+        objects.get(0).getChildObject().get(7).getChildObject().get(0).rotateObject((float) Math.toRadians(-125), 1.0f, 0f, 0f);
 
         objects.get(0).getChildObject().get(7).getChildObject().get(0).getChildObject().add(new Sphere2(
                         Arrays.asList(
@@ -785,18 +779,18 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                         ),
                         new ArrayList<>(),
-                        new Vector4f(0.85f,0.97f,0.46f,1.0f),
-                        Arrays.asList(0.0f,0.0f,0.0f),
+                        new Vector4f(0.85f, 0.97f, 0.46f, 1.0f),
+                        Arrays.asList(0.0f, 0.0f, 0.0f),
                         0.003f,
                         0.004f,
                         0.002f,
-                        1,-7,0
+                        1, -7, 0
                 )
         );
-        objects.get(0).getChildObject().get(7).getChildObject().get(0).getChildObject().get(0).translateObject(0f,-0.31f,-0.22f);
-        objects.get(0).getChildObject().get(7).getChildObject().get(0).getChildObject().get(0).rotateObject((float)Math.toRadians(-115), 1.0f, 0f, 0f);
-        objects.get(0).scaleObject(0.55f,0.55f,0.55f);
-        objects.get(0).rotateObject((float)Math.toRadians(-180), 0.0f, 1f, 0f);
+        objects.get(0).getChildObject().get(7).getChildObject().get(0).getChildObject().get(0).translateObject(0f, -0.31f, -0.22f);
+        objects.get(0).getChildObject().get(7).getChildObject().get(0).getChildObject().get(0).rotateObject((float) Math.toRadians(-115), 1.0f, 0f, 0f);
+        objects.get(0).scaleObject(0.55f, 0.55f, 0.55f);
+        objects.get(0).rotateObject((float) Math.toRadians(-180), 0.0f, 1f, 0f);
 
         objects.add(new Sphere(
                 Arrays.asList(
@@ -826,7 +820,7 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0,0,0, 1f), 0.0f, 0.0f, 0.1f, 0.1f, 0.1f
+                new Vector4f(0, 0, 0, 1f), 0.0f, 0.0f, 0.1f, 0.1f, 0.1f
         ));
         objects.get(1).getChildObject().add(new Sphere(
                 Arrays.asList(
@@ -839,7 +833,7 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0,0,0, 1f), 0.0f, 0.0f, 0.1f, 0.1f, 0.1f
+                new Vector4f(0, 0, 0, 1f), 0.0f, 0.0f, 0.1f, 0.1f, 0.1f
         ));
         //tangan
         objects.get(1).getChildObject().get(0).getChildObject().add(new Tabung(Arrays.asList(
@@ -1052,7 +1046,7 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0,0,0, 1f), 0.0f, 0.0f, 0.1f, 0.1f, 0.1f
+                new Vector4f(0, 0, 0, 1f), 0.0f, 0.0f, 0.1f, 0.1f, 0.1f
         ));
 //      sendi betis kaki kiri
         objects.get(1).getChildObject().get(6).getChildObject().get(0).getChildObject().add(new Sphere(
@@ -1066,7 +1060,7 @@ public class main {
                                         , GL_FRAGMENT_SHADER)
                 ),
                 new ArrayList<>(),
-                new Vector4f(0,0,0, 1f), 0.0f, 0.0f, 0.1f, 0.1f, 0.1f
+                new Vector4f(0, 0, 0, 1f), 0.0f, 0.0f, 0.1f, 0.1f, 0.1f
         ));
 //    betis kanan
 
@@ -1248,13 +1242,11 @@ public class main {
 //
 
 
-
         objects.get(1).getChildObject().get(0).scaleObject(2f, 2f, 2f);
         objects.get(1).getChildObject().get(1).scaleObject(2f, 2f, 2f);
-        objects.get(1).getChildObject().get(0).getChildObject().get(2).rotateObject(0.5f,0f,-0.5f,-1f);
+        objects.get(1).getChildObject().get(0).getChildObject().get(2).rotateObject(0.5f, 0f, -0.5f, -1f);
 //        objects.get(0).getChildObject().get(1).getChildObject().get(2).rotateObject(0.5f,0f,-0.5f,1f);
 //        objects.get(0).getChildObject().get(1).rotateObject((float)Math.toRadians(-90f),0f,0f,1f);
-
 
 
         objects.get(1).getChildObject().get(0).translateObject(0.8f, 0.5f, 0.0f);
@@ -1297,13 +1289,13 @@ public class main {
         objects.get(1).getChildObject().get(6).getChildObject().get(0).getChildObject().get(0).getChildObject().get(0).getChildObject().get(0).translateObject(0f, -0.25f, 0.2f);
 
 
-        objects.get(1).getChildObject().get(1).rotateObject((float)Math.toRadians(40f),0f,0f,1f);
+        objects.get(1).getChildObject().get(1).rotateObject((float) Math.toRadians(40f), 0f, 0f, 1f);
         objects.get(1).getChildObject().get(1).translateObject(0.2f, 0.7f, 0.0f);
-        objects.get(1).getChildObject().get(0).rotateObject((float)Math.toRadians(40f),0f,0f,-1f);
+        objects.get(1).getChildObject().get(0).rotateObject((float) Math.toRadians(40f), 0f, 0f, -1f);
         objects.get(1).getChildObject().get(0).translateObject(-0.2f, 0.7f, 0.0f);
 
-        objects.get(0).translateObject(1.3f,0f,0f);
-        objects.get(0).scaleObject(3f,3f,3f);
+        objects.get(0).translateObject(1.3f, 0f, 0f);
+        objects.get(0).scaleObject(3f, 3f, 3f);
 
 
 //        code mouritus
@@ -1993,7 +1985,8 @@ public class main {
                 ),
                 new ArrayList<>(),
                 new Vector4f(1, 1, 1, 1f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
-        ));jointLegRight = lowerBody.getChildObject().get(intlowerBody);
+        ));
+        jointLegRight = lowerBody.getChildObject().get(intlowerBody);
         intlowerBody++;
 
         tempCenterPoint = lowerBody.updateCenterPointObject();
@@ -2036,7 +2029,8 @@ public class main {
                 ),
                 new ArrayList<>(),
                 new Vector4f(1, 1, 1, 1f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
-        ));jointFootRight = legRight.getChildObject().get(0);
+        ));
+        jointFootRight = legRight.getChildObject().get(0);
 
         tempCenterPoint = legRight.updateCenterPointObject();
 
@@ -2062,7 +2056,7 @@ public class main {
 
         tempCenterPoint = jointFootRight.updateCenterPointObject();
         jointFootRight.getChildObject().get(0).rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
-        jointFootRight.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y -0.03f, tempCenterPoint.z + 0.033f);
+        jointFootRight.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y - 0.03f, tempCenterPoint.z + 0.033f);
 
 
         //joint leg left
@@ -2078,7 +2072,8 @@ public class main {
                 ),
                 new ArrayList<>(),
                 new Vector4f(1, 1, 1, 1f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
-        ));jointLegLeft = lowerBody.getChildObject().get(intlowerBody);
+        ));
+        jointLegLeft = lowerBody.getChildObject().get(intlowerBody);
         intlowerBody++;
 
         tempCenterPoint = lowerBody.updateCenterPointObject();
@@ -2122,7 +2117,8 @@ public class main {
                 ),
                 new ArrayList<>(),
                 new Vector4f(1, 1, 1, 1f), 0.0f, 0.0f, 0.02f, 0.02f, 0.05f
-        ));jointFootLeft = legLeft.getChildObject().get(0);
+        ));
+        jointFootLeft = legLeft.getChildObject().get(0);
 
         tempCenterPoint = legLeft.updateCenterPointObject();
 
@@ -2148,7 +2144,7 @@ public class main {
 
         tempCenterPoint = jointFootLeft.updateCenterPointObject();
         jointFootLeft.getChildObject().get(0).rotateObject((float) Math.toRadians(90f), 1f, 0f, 0f);
-        jointFootLeft.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y -0.03f, tempCenterPoint.z + 0.033f);
+        jointFootLeft.getChildObject().get(0).translateObject(tempCenterPoint.x, tempCenterPoint.y - 0.03f, tempCenterPoint.z + 0.033f);
 
 
         //tail
@@ -2406,7 +2402,7 @@ public class main {
                 180f
         ));
         Object roof = environment.get(4);
-        roof.translateObject(0f,5f,0f);
+        roof.translateObject(0f, 5f, 0f);
 
 
         //platform atas floor
@@ -2430,137 +2426,310 @@ public class main {
 
     }
 
-
     public void input() {
-        if (window.isKeyPressed(GLFW_KEY_W)) {
+
+        if (window.isKeyPressed(GLFW_KEY_TAB)) {
 //            kaki
 //            objects.get(0).getChildObject().get(5).rotateObject((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f);
-            for (Object y :  objects.get(1).getChildObject().get(5).getChildObject()) {
+            for (Object y : objects.get(1).getChildObject().get(5).getChildObject()) {
                 kaki--;
 //                rotasi terhadap bumi
                 List<Float> temp1 = new ArrayList<>(objects.get(1).getChildObject().get(0).getChildObject().get(0).getCenterPoint());
                 y.translateObject(temp1.get(0) * -1, temp1.get(1) * -1, temp1.get(2) * -1);
-                if (temp==10){
-                    kaki=0;
-                    temp=0;
+                if (temp == 10) {
+                    kaki = 0;
+                    temp = 0;
                 }
-                if(kaki <= -10){
+                if (kaki <= -10) {
 //                    jalan+=0.001;
-                    {y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);}
+                    {
+                        y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);
+                    }
 //                    objects.get(0).translateObject(0f,0f,jalan);
                     temp++;
-                }
-                else
+                } else
 //                jalan+=0.001;
-                {y.rotateObject((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f);}
+                {
+                    y.rotateObject((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f);
+                }
                 y.translateObject(temp1.get(0) * 1, temp1.get(1) * 1, temp1.get(2) * 1);
                 System.out.println(kaki);
             }
-            for (Object y :  objects.get(1).getChildObject().get(6).getChildObject()) {
+            for (Object y : objects.get(1).getChildObject().get(6).getChildObject()) {
                 kaki--;
 //                rotasi terhadap bumi
                 List<Float> temp1 = new ArrayList<>(objects.get(1).getChildObject().get(0).getChildObject().get(0).getCenterPoint());
                 y.translateObject(temp1.get(0) * -1, temp1.get(1) * -1, temp1.get(2) * -1);
-                if (temp==10){
-                    kaki=0;
-                    temp=0;
+                if (temp == 10) {
+                    kaki = 0;
+                    temp = 0;
                 }
-                if(kaki <= -10){
+                if (kaki <= -10) {
 //                    jalan+=0.001;
-                    {y.rotateObject((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f);}
+                    {
+                        y.rotateObject((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f);
+                    }
 //                    objects.get(0).translateObject(0f,0f,jalan);
                     temp++;
-                }
-                else
+                } else
 //                jalan+=0.001;
-                {y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);}
+                {
+                    y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);
+                }
                 y.translateObject(temp1.get(0) * 1, temp1.get(1) * 1, temp1.get(2) * 1);
                 System.out.println(kaki);
             }
 //            tangan
 //
-            for (Object y :  objects.get(1).getChildObject().get(0).getChildObject()) {
+            for (Object y : objects.get(1).getChildObject().get(0).getChildObject()) {
                 tangan--;
 //                rotasi terhadap bumi
                 List<Float> temp1 = new ArrayList<>(objects.get(1).getChildObject().get(0).getChildObject().get(0).getCenterPoint());
                 y.translateObject(temp1.get(0) * -1, temp1.get(1) * -1, temp1.get(2) * -1);
-                if (tempo==30){
-                    tangan=0;
-                    tempo=0;
+                if (tempo == 30) {
+                    tangan = 0;
+                    tempo = 0;
                 }
-                if(tangan <= -30){
+                if (tangan <= -30) {
 //                    jalan+=0.001;
-                    {y.rotateObject((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f);}
+                    {
+                        y.rotateObject((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f);
+                    }
 //                    objects.get(0).translateObject(0f,0f,jalan);
-                   tempo++;
-                }
-                else
+                    tempo++;
+                } else
 //                jalan+=0.001;
-                {y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);}
+                {
+                    y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);
+                }
                 y.translateObject(temp1.get(0) * 1, temp1.get(1) * 1, temp1.get(2) * 1);
                 System.out.println(kaki);
             }
-            for (Object y :  objects.get(1).getChildObject().get(1).getChildObject()) {
+            for (Object y : objects.get(1).getChildObject().get(1).getChildObject()) {
                 tangan--;
 //                rotasi terhadap bumi
                 List<Float> temp1 = new ArrayList<>(objects.get(1).getChildObject().get(0).getChildObject().get(0).getCenterPoint());
                 y.translateObject(temp1.get(0) * -1, temp1.get(1) * -1, temp1.get(2) * -1);
-                if (tempo==30){
-                    tangan=0;
-                    tempo=0;
+                if (tempo == 30) {
+                    tangan = 0;
+                    tempo = 0;
                 }
-                if(tangan <= -30){
+                if (tangan <= -30) {
 //                    jalan+=0.001;
-                    {y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);}
+                    {
+                        y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);
+                    }
 //                    objects.get(0).translateObject(0f,0f,jalan);
                     tempo++;
-                }
-                else
+                } else
 //                jalan+=0.001;
-                {y.rotateObject((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f);}
+                {
+                    y.rotateObject((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f);
+                }
                 y.translateObject(temp1.get(0) * 1, temp1.get(1) * 1, temp1.get(2) * 1);
                 System.out.println(kaki);
             }
 
             List<Float> temp = new ArrayList<>(objects.get(0).getChildObject().get(3).getCenterPoint());
             List<Float> temp2 = new ArrayList<>(objects.get(0).getChildObject().get(4).getCenterPoint());
-            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*-1,temp.get(1)*-1,temp.get(2)*-1);
-            objects.get(0).getChildObject().get(3).rotateObject(1.5f, 1f, 0f, 0f,15f);
-            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*1,temp.get(1)*1,temp.get(2)*1);
+            objects.get(0).getChildObject().get(3).translateObject(temp.get(0) * -1, temp.get(1) * -1, temp.get(2) * -1);
+            objects.get(0).getChildObject().get(3).rotateObject(1.5f, 1f, 0f, 0f, 15f);
+            objects.get(0).getChildObject().get(3).translateObject(temp.get(0) * 1, temp.get(1) * 1, temp.get(2) * 1);
 
-            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*-1,temp2.get(1)*-1,temp2.get(2)*-1);
-            objects.get(0).getChildObject().get(4).rotateObject(1.5f, -1f, 0f, 0f,15f);
-            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*1,temp2.get(1)*1,temp2.get(2)*1);
+            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0) * -1, temp2.get(1) * -1, temp2.get(2) * -1);
+            objects.get(0).getChildObject().get(4).rotateObject(1.5f, -1f, 0f, 0f, 15f);
+            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0) * 1, temp2.get(1) * 1, temp2.get(2) * 1);
 
-            objects.get(0).translateObject(0f,0f,0f);
+            objects.get(0).translateObject(0f, 0f, 0f);
 
+        }
+
+        if (window.isKeyPressed(GLFW_KEY_W) || window.isKeyPressed(GLFW_KEY_A) || window.isKeyPressed(GLFW_KEY_S) || window.isKeyPressed(GLFW_KEY_D)) {
+            lowerBody.resetRotate(2);
+        }
+        else if (window.isKeyPressed(GLFW_KEY_SPACE)) {
+
+        }
+        else {
+            lowerBody.resetAllChildren();
+            valueArray.replaceAll(Integer -> 0.0);
+            stateArray.replaceAll(Boolean -> true);
+        }
+
+
+        if (window.isKeyPressed(GLFW_KEY_W)) {
+            if (window.isKeyPressed(GLFW_KEY_A)) {
+                //1 billy
+                if (window.isKeyPressed(GLFW_KEY_KP_1)) {
+
+                }
+
+                //2 juven
+                if (window.isKeyPressed(GLFW_KEY_KP_2)) {
+
+                }
+
+                //3 mou
+                if (window.isKeyPressed(GLFW_KEY_KP_3)) {
+                    rotate1.y(lowerBody, 225);
+                    walk(3);
+                }
+            } else if (window.isKeyPressed(GLFW_KEY_S)) {
+                if (window.isKeyPressed(GLFW_KEY_KP_1)) {
             }
 
-        //code mou input
-        class Rotate {
-            private void x (Object object, float rotate) {
-                Vector3f tempCenterPoint = object.updateCenterPointObject();
-                object.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
-                object.rotateObjectAnimate((float) Math.toRadians(rotate), 1f, 0f, 0f, camera, projection);
-                object.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
-            }
+                //2 juven
+                if (window.isKeyPressed(GLFW_KEY_KP_2)) {
 
-            private void y (Object object, float rotate) {
-                Vector3f tempCenterPoint = object.updateCenterPointObject();
-                object.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
-                object.rotateObjectAnimate((float) Math.toRadians(rotate), 0f, 1f, 0f, camera, projection);
-                object.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
-            }
+                }
 
-            private void z (Object object, float rotate) {
-                Vector3f tempCenterPoint = object.updateCenterPointObject();
-                object.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
-                object.rotateObjectAnimate((float) Math.toRadians(rotate), 0f, 0f, 1f, camera, projection);
-                object.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+                //3 mou
+                if (window.isKeyPressed(GLFW_KEY_KP_3)) {
+                    walk(3);
+                }
+            } else if (window.isKeyPressed(GLFW_KEY_D)) {
+                //1 billy
+                if (window.isKeyPressed(GLFW_KEY_KP_1)) {
+
+                }
+
+                //2 juven
+                if (window.isKeyPressed(GLFW_KEY_KP_2)) {
+
+                }
+
+                //3 mou
+                if (window.isKeyPressed(GLFW_KEY_KP_3)) {
+                    rotate1.y(lowerBody, 135);
+                }
+            } else {
+                //1 billy
+                if (window.isKeyPressed(GLFW_KEY_KP_1)) {
+
+                }
+
+                //2 juven
+                if (window.isKeyPressed(GLFW_KEY_KP_2)) {
+
+                }
+
+                //3 mou
+                if (window.isKeyPressed(GLFW_KEY_KP_3)) {
+                    rotate1.y(lowerBody, 180);
+                    walk(3);
+                }
             }
         }
-        Rotate rotate1 = new Rotate();
+        else if (window.isKeyPressed(GLFW_KEY_A)) {
+            if (window.isKeyPressed(GLFW_KEY_S)) {
+                //1 billy
+                if (window.isKeyPressed(GLFW_KEY_KP_1)) {
 
+                }
+
+                //2 juven
+                if (window.isKeyPressed(GLFW_KEY_KP_2)) {
+
+                }
+
+                //3 mou
+                if (window.isKeyPressed(GLFW_KEY_KP_3)) {
+                    rotate1.y(lowerBody, -45);
+                    walk(3);
+                }
+            }
+            else if (window.isKeyPressed(GLFW_KEY_D)) {
+
+                //1 billy
+                if (window.isKeyPressed(GLFW_KEY_KP_1)) {
+
+                }
+
+                //2 juven
+                if (window.isKeyPressed(GLFW_KEY_KP_2)) {
+
+                }
+
+                //3 mou
+                if (window.isKeyPressed(GLFW_KEY_KP_3)) {
+                    walk(3);
+                }
+            }
+            else {
+
+                //1 billy
+                if (window.isKeyPressed(GLFW_KEY_KP_1)) {
+
+                }
+
+                //2 juven
+                if (window.isKeyPressed(GLFW_KEY_KP_2)) {
+
+                }
+
+                //3 mou
+                if (window.isKeyPressed(GLFW_KEY_KP_3)) {
+                    rotate1.y(lowerBody, -90);
+                    walk(3);
+                }
+            }
+        }
+        else if (window.isKeyPressed(GLFW_KEY_S)) {
+            if (window.isKeyPressed(GLFW_KEY_D)) {
+                //1 billy
+                if (window.isKeyPressed(GLFW_KEY_KP_1)) {
+
+                }
+
+                //2 juven
+                if (window.isKeyPressed(GLFW_KEY_KP_2)) {
+
+                }
+
+                //3 mou
+                if (window.isKeyPressed(GLFW_KEY_KP_3)) {
+                    rotate1.y(lowerBody, 45);
+                    walk(3);
+                }
+            }
+            //1 billy
+            if (window.isKeyPressed(GLFW_KEY_KP_1)) {
+
+            }
+
+            //2 juven
+            if (window.isKeyPressed(GLFW_KEY_KP_2)) {
+
+            }
+
+            //3 mou
+            if (window.isKeyPressed(GLFW_KEY_KP_3)) {
+                walk(3);
+            }
+
+        }
+        else if (window.isKeyPressed(GLFW_KEY_D)) {
+
+            //1 billy
+            if (window.isKeyPressed(GLFW_KEY_KP_1)) {
+
+            }
+
+            //2 juven
+            if (window.isKeyPressed(GLFW_KEY_KP_2)) {
+
+            }
+
+            //3 mou
+            if (window.isKeyPressed(GLFW_KEY_KP_3)) {
+                rotate1.y(lowerBody, 90f);
+                
+                walk(3);
+            }
+        }
+
+
+        //code mou input
         // value 0 state 0 1 head right left
         if (window.isKeyPressed(GLFW_KEY_Y)) {
             if (stateArray.get(1)) {
@@ -2599,7 +2768,7 @@ public class main {
         // value 1 state 2 3 walk
         if (window.isKeyPressed(GLFW_KEY_Q)) {
             float move = 1;
-            float move1 = move/2;
+            float move1 = move / 2;
             if (stateArray.get(3)) {
                 if (valueArray.get(1) < 30 && stateArray.get(2)) {
                     rotate1.x(jointArmRight, -move);
@@ -2624,8 +2793,7 @@ public class main {
                     if (valueArray.get(1) > 18) {
                         rotate1.x(jointFootLeft, move * 1.3f);
 
-                    }
-                    else {
+                    } else {
                         rotate1.x(jointFootLeft, -move);
 
                     }
@@ -2660,8 +2828,7 @@ public class main {
                     if (valueArray.get(1) < -18) {
 
                         rotate1.x(jointFootRight, move * 1.3f);
-                    }
-                    else {
+                    } else {
 
                         rotate1.x(jointFootRight, -move);
                     }
@@ -2671,8 +2838,8 @@ public class main {
                 if (valueArray.get(1) == 0) {
                     stateArray.set(2, true);
                     stateArray.set(3, true);
-                    jointFootRight.resetPos();
-                    jointFootLeft.resetPos();
+                    jointFootRight.resetALl();
+                    jointFootLeft.resetALl();
                 }
             }
         }
@@ -2692,15 +2859,14 @@ public class main {
                     rotate1.x(jointFootLeft, move);
                     rotate1.x(jointFootRight, move);
 
-                    rotate1.x(lowerBody, move/1.5f);
-                    rotate1.x(jointUpperBody, move/2.2f);
+                    rotate1.x(lowerBody, move / 1.5f);
+                    rotate1.x(jointUpperBody, move / 2.2f);
                     if (valueArray.get(2) < 15) {
                         lowerBody.translateObject(-0.005f, -valueArray.get(2).floatValue() / 9000f, 0f);
-                    }
-                    else
+                    } else
                         lowerBody.translateObject(-0.005f, -valueArray.get(2).floatValue() / 20000f, 0f);
 
-                    jointUpperBody.translateObject(-0.0005f,0f,0f);
+                    jointUpperBody.translateObject(-0.0005f, 0f, 0f);
 
 
                     valueArray.set(2, valueArray.get(2) + move);
@@ -2716,16 +2882,14 @@ public class main {
                     rotate1.x(jointFootLeft, -move);
                     rotate1.x(jointFootRight, -move);
 
-                    rotate1.x(lowerBody, -move/1.5f);
-                    rotate1.x(jointUpperBody, -move/2.2f);
-                    System.out.println(valueArray.get(2));
+                    rotate1.x(lowerBody, -move / 1.5f);
+                    rotate1.x(jointUpperBody, -move / 2.2f);
                     if (valueArray.get(2) < 15) {
                         lowerBody.translateObject(0.005f, valueArray.get(2).floatValue() / 9000f, 0f);
-                    }
-                    else
+                    } else
                         lowerBody.translateObject(0.005f, valueArray.get(2).floatValue() / 20000f, 0f);
 
-                    jointUpperBody.translateObject(0.0005f,0f,0f);
+                    jointUpperBody.translateObject(0.0005f, 0f, 0f);
 
                     valueArray.set(2, valueArray.get(2) - move);
                 }
@@ -2733,7 +2897,7 @@ public class main {
                 if (valueArray.get(2) == 0) {
                     stateArray.set(4, true);
                     stateArray.set(5, false);
-                    lowerBody.resetPosChildren(1);
+                    lowerBody.resetAllChildren(1);
                 }
             } else {
 
@@ -2770,42 +2934,136 @@ public class main {
 
 
         if (window.isKeyPressed(GLFW_KEY_R)) {
-            lowerBody.resetPosChildren();
+            lowerBody.resetAllChildren();
             valueArray.replaceAll(Integer -> 0.0);
             stateArray.replaceAll(Boolean -> true);
         }
 
 
-        if (window.isKeyPressed(GLFW_KEY_L)){
+        if (window.isKeyPressed(GLFW_KEY_L)) {
 //            objects.get(0).rotateObject((float) Math.toRadians(7f), 0.0f, 1.0f, 0.0f);
             camera.addRotation((float) Math.toRadians(0f), (float) Math.toRadians(4f));
 
 
         }
-        if (window.isKeyPressed(GLFW_KEY_J)){
+        if (window.isKeyPressed(GLFW_KEY_J)) {
             camera.addRotation((float) Math.toRadians(0f), (float) Math.toRadians(-4f));
 
 
         }
-        if (window.isKeyPressed(GLFW_KEY_I)){
+        if (window.isKeyPressed(GLFW_KEY_I)) {
             camera.moveForward((float) Math.toRadians(4f));
 
 
-    }
-        if (window.isKeyPressed(GLFW_KEY_K)){
+        }
+        if (window.isKeyPressed(GLFW_KEY_K)) {
             camera.moveBackwards((float) Math.toRadians(4f));
 
 
         }
-        if (window.isKeyPressed(GLFW_KEY_A)){
+        if (window.isKeyPressed(GLFW_KEY_1)) {
             objects.get(1).rotateObject((float) Math.toRadians(7f), 1.0f, 0.0f, 1.0f);
 
         }
-        if (window.isKeyPressed(GLFW_KEY_E)){
+        if (window.isKeyPressed(GLFW_KEY_E)) {
             objects.get(1).rotateObject((float) Math.toRadians(7f), 0.0f, 0.0f, 0.0f);
         }
 
     }
+
+    public void walk(int i) {
+        switch (i) {
+
+            //billy walk
+            case 1:
+                break;
+
+            //juven walk
+            case 2:
+                break;
+
+            //mou walk
+            case 3:
+                System.out.println(Math.toDegrees(jointArmLeft.getRotation().y));
+                float move = 1;
+                float move1 = move / 2;
+                if (stateArray.get(3)) {
+                    if (valueArray.get(1) < 30 && stateArray.get(2)) {
+                        rotate1.x(jointArmRight, -move);
+                        rotate1.x(jointHandRight, -move1);
+                        rotate1.x(jointArmLeft, move);
+
+                        rotate1.x(jointLegRight, move);
+                        rotate1.x(jointLegLeft, -move);
+
+                        valueArray.set(1, valueArray.get(1) + move);
+
+                    } else {
+                        stateArray.set(2, false);
+                        rotate1.x(jointArmRight, move);
+                        rotate1.x(jointHandRight, move1);
+                        rotate1.x(jointArmLeft, -move);
+
+                        rotate1.x(jointLegRight, -move);
+                        rotate1.x(jointLegLeft, move);
+
+
+                        if (valueArray.get(1) > 18) {
+                            rotate1.x(jointFootLeft, move * 1.3f);
+
+                        } else {
+                            rotate1.x(jointFootLeft, -move);
+
+                        }
+
+                        valueArray.set(1, valueArray.get(1) - move);
+                    }
+
+                    if (valueArray.get(1) == 0) {
+                        stateArray.set(2, true);
+                        stateArray.set(3, false);
+                    }
+                } else {
+                    if (valueArray.get(1) > -30 && stateArray.get(2)) {
+                        rotate1.x(jointArmRight, move);
+                        rotate1.x(jointArmLeft, -move);
+                        rotate1.x(jointHandLeft, -move1);
+
+                        rotate1.x(jointLegRight, -move);
+                        rotate1.x(jointLegLeft, move);
+
+                        valueArray.set(1, valueArray.get(1) - move);
+                    } else {
+                        stateArray.set(2, false);
+                        rotate1.x(jointArmRight, -move);
+                        rotate1.x(jointArmLeft, move);
+                        rotate1.x(jointHandLeft, move1);
+
+                        rotate1.x(jointLegRight, move);
+                        rotate1.x(jointLegLeft, -move);
+
+
+                        if (valueArray.get(1) < -18) {
+
+                            rotate1.x(jointFootRight, move * 1.3f);
+                        } else {
+
+                            rotate1.x(jointFootRight, -move);
+                        }
+                        valueArray.set(1, valueArray.get(1) + move);
+                    }
+
+                    if (valueArray.get(1) == 0) {
+                        stateArray.set(2, true);
+                        stateArray.set(3, true);
+                        jointFootRight.resetALl();
+                        jointFootLeft.resetALl();
+                    }
+                }
+                break;
+        }
+    }
+       
     public void eyeRightDecor() {
         Vector3f tempCenterPoint;
         //eye right black retina
@@ -3455,11 +3713,10 @@ public class main {
 
     }
 
-
     public void loop() {
         while (window.isOpen()) {
             window.update();
-            glClearColor(0,0.5f,1, 0.0f);
+            glClearColor(0, 0.5f, 1, 0.0f);
             GL.createCapabilities();
 
             glDisableVertexAttribArray(0);
@@ -3503,5 +3760,28 @@ public class main {
 
         glfwTerminate();
         glfwSetErrorCallback(null).free();
+    }
+
+    class Rotate {
+        private void x(Object object, float rotate) {
+            Vector3f tempCenterPoint = object.updateCenterPointObject();
+            object.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+            object.rotateObjectAnimate((float) Math.toRadians(rotate), 1f, 0f, 0f, camera, projection);
+            object.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+        }
+
+        private void y(Object object, float rotate) {
+            Vector3f tempCenterPoint = object.updateCenterPointObject();
+            object.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+            object.rotateObjectAnimate((float) Math.toRadians(rotate), 0f, 1f, 0f, camera, projection);
+            object.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+        }
+
+        private void z(Object object, float rotate) {
+            Vector3f tempCenterPoint = object.updateCenterPointObject();
+            object.translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+            object.rotateObjectAnimate((float) Math.toRadians(rotate), 0f, 0f, 1f, camera, projection);
+            object.translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+        }
     }
 }
