@@ -2601,6 +2601,7 @@ public class main {
                 //3 mou
                 if (window.isKeyPressed(GLFW_KEY_KP_3)) {
                     rotate1.y(lowerBody, 135);
+                    walk(3);
                 }
             } else {
                 //1 billy
