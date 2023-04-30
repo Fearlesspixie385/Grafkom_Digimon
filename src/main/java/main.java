@@ -1916,7 +1916,7 @@ public class main {
         if (window.isKeyPressed(GLFW_KEY_W) || window.isKeyPressed(GLFW_KEY_A) || window.isKeyPressed(GLFW_KEY_S) || window.isKeyPressed(GLFW_KEY_D)) {
             lowerBody.resetRotate(2);
         }
-        else if (window.isKeyPressed(GLFW_KEY_SPACE)) {
+        else if (window.isKeyPressed(GLFW_KEY_SPACE) || window.isKeyPressed(GLFW_KEY_LEFT_ALT)) {
 
         }
         else {
@@ -2217,6 +2217,7 @@ public class main {
 
         //value 2 state 4 5 jump
         if (window.isKeyPressed(GLFW_KEY_LEFT_ALT)) {
+            System.out.println(lowerBody.getRotation().x);
             float move = 1;
             if (stateArray.get(5)) {
                 if (valueArray.get(2) < 30 && stateArray.get(4)) {
@@ -2232,11 +2233,11 @@ public class main {
                     rotate1.x(lowerBody, move / 1.5f);
                     rotate1.x(jointUpperBody, move / 2.2f);
                     if (valueArray.get(2) < 15) {
-                        lowerBody.translateObject(-0.005f, -valueArray.get(2).floatValue() / 9000f, 0f);
+                        lowerBody.translateObject(0f, -valueArray.get(2).floatValue() / 9000f, -0.005f);
                     } else
-                        lowerBody.translateObject(-0.005f, -valueArray.get(2).floatValue() / 20000f, 0f);
+                        lowerBody.translateObject(0f, -valueArray.get(2).floatValue() / 20000f, -0.005f);
 
-                    jointUpperBody.translateObject(-0.0005f, 0f, 0f);
+                    jointUpperBody.translateObject(0f, 0f, -0.0005f);
 
 
                     valueArray.set(2, valueArray.get(2) + move);
@@ -2255,11 +2256,11 @@ public class main {
                     rotate1.x(lowerBody, -move / 1.5f);
                     rotate1.x(jointUpperBody, -move / 2.2f);
                     if (valueArray.get(2) < 15) {
-                        lowerBody.translateObject(0.005f, valueArray.get(2).floatValue() / 9000f, 0f);
+                        lowerBody.translateObject(0f, valueArray.get(2).floatValue() / 9000f, 0.005f);
                     } else
-                        lowerBody.translateObject(0.005f, valueArray.get(2).floatValue() / 20000f, 0f);
+                        lowerBody.translateObject(0f, valueArray.get(2).floatValue() / 20000f, 0.005f);
 
-                    jointUpperBody.translateObject(0.0005f, 0f, 0f);
+                    jointUpperBody.translateObject(0f, 0f, 0.0005f);
 
                     valueArray.set(2, valueArray.get(2) - move);
                 }
