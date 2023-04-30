@@ -33,6 +33,14 @@ public class Palmon {
     boolean evolveFinish = false;
     List<Float> latestPosition = new ArrayList<>();
 
+    float degreeInc = 0;
+    int SwitchDegree = 1;
+
+
+    float kaki=0;
+    float tangan=0;
+    float temp=0;
+    float tempo=0;
 
     public void init(){
         window.init();
@@ -774,44 +782,133 @@ public class Palmon {
 //        Walk
 
         if (window.isKeyPressed(GLFW_KEY_Z)) {
-            List<Float> temp = new ArrayList<>(objects.get(0).getChildObject().get(3).getCenterPoint());
-            List<Float> temp2 = new ArrayList<>(objects.get(0).getChildObject().get(4).getCenterPoint());
-            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*-1,temp.get(1)*-1,temp.get(2)*-1);
-            objects.get(0).getChildObject().get(3).rotateObject((float)Math.toRadians(1.5), 1f, 0f, 0f);
-            objects.get(0).getChildObject().get(3).translateObject(temp.get(0)*1,temp.get(1)*1,temp.get(2)*1);
 
-            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*-1,temp2.get(1)*-1,temp2.get(2)*-1);
-            objects.get(0).getChildObject().get(4).rotateObject((float)Math.toRadians(1.5), 1f, 0f, 0f);
-            objects.get(0).getChildObject().get(4).translateObject(temp2.get(0)*1,temp2.get(1)*1,temp2.get(2)*1);
+            if(!evolveFinish) {
+                if (SwitchDegree == 1) {
+                    timer += 1.5;
+                    List<Float> temp = new ArrayList<>(objects.get(0).getChildObject().get(3).getCenterPoint());
+                    List<Float> temp2 = new ArrayList<>(objects.get(0).getChildObject().get(4).getCenterPoint());
+                    objects.get(0).getChildObject().get(3).translateObject(temp.get(0) * -1, temp.get(1) * -1, temp.get(2) * -1);
+                    objects.get(0).getChildObject().get(3).rotateObjectAnimate((float) Math.toRadians(3), 1f, 0f, 0f, camera, projection);
+                    objects.get(0).getChildObject().get(3).translateObject(temp.get(0) * 1, temp.get(1) * 1, temp.get(2) * 1);
 
-            if(timer > 15){
+                    objects.get(0).getChildObject().get(4).translateObject(temp2.get(0) * -1, temp2.get(1) * -1, temp2.get(2) * -1);
+                    objects.get(0).getChildObject().get(4).rotateObjectAnimate((float) Math.toRadians(-3), 1f, 0f, 0f, camera, projection);
+                    objects.get(0).getChildObject().get(4).translateObject(temp2.get(0) * 1, temp2.get(1) * 1, temp2.get(2) * 1);
 
+
+                    if (timer >= 15.0f) {
+                        SwitchDegree = 0;
+                    }
+                } else {
+                    timer -= 1.5;
+                    List<Float> temp = new ArrayList<>(objects.get(0).getChildObject().get(3).getCenterPoint());
+                    List<Float> temp2 = new ArrayList<>(objects.get(0).getChildObject().get(4).getCenterPoint());
+                    objects.get(0).getChildObject().get(3).translateObject(temp.get(0) * -1, temp.get(1) * -1, temp.get(2) * -1);
+                    objects.get(0).getChildObject().get(3).rotateObjectAnimate((float) Math.toRadians(-3), 1f, 0f, 0f, camera, projection);
+                    objects.get(0).getChildObject().get(3).translateObject(temp.get(0) * 1, temp.get(1) * 1, temp.get(2) * 1);
+
+                    objects.get(0).getChildObject().get(4).translateObject(temp2.get(0) * -1, temp2.get(1) * -1, temp2.get(2) * -1);
+                    objects.get(0).getChildObject().get(4).rotateObjectAnimate((float) Math.toRadians(3), 1f, 0f, 0f, camera, projection);
+                    objects.get(0).getChildObject().get(4).translateObject(temp2.get(0) * 1, temp2.get(1) * 1, temp2.get(2) * 1);
+
+                    if (timer <= -15.0f) {
+                        SwitchDegree = 1;
+                    }
+                }
             }
+            else{
+                for (Object y :  objects.get(1).getChildObject().get(5).getChildObject()) {
+                    kaki--;
+//                rotasi terhadap bumi
+                    List<Float> temp1 = new ArrayList<>(objects.get(1).getChildObject().get(0).getChildObject().get(0).getCenterPoint());
+                    y.translateObject(temp1.get(0) * -1, temp1.get(1) * -1, temp1.get(2) * -1);
+                    if (temp==10){
+                        kaki=0;
+                        temp=0;
+                    }
+                    if(kaki <= -10){
+//                    jalan+=0.001;
+                        {y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);}
+//                    objects.get(0).translateObject(0f,0f,jalan);
+                        temp++;
+                    }
+                    else
+//                jalan+=0.001;
+                    {y.rotateObjectAnimate((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f,camera,projection);}
+                    y.translateObject(temp1.get(0) * 1, temp1.get(1) * 1, temp1.get(2) * 1);
+                    System.out.println(kaki);
+                }
+                for (Object y :  objects.get(1).getChildObject().get(6).getChildObject()) {
+                    kaki--;
+//                rotasi terhadap bumi
+                    List<Float> temp1 = new ArrayList<>(objects.get(1).getChildObject().get(0).getChildObject().get(0).getCenterPoint());
+                    y.translateObject(temp1.get(0) * -1, temp1.get(1) * -1, temp1.get(2) * -1);
+                    if (temp==10){
+                        kaki=0;
+                        temp=0;
+                    }
+                    if(kaki <= -10){
+//                    jalan+=0.001;
+                        {y.rotateObjectAnimate((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f,camera,projection);}
+//                    objects.get(0).translateObject(0f,0f,jalan);
+                        temp++;
+                    }
+                    else
+//                jalan+=0.001;
+                    {y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);}
+                    y.translateObject(temp1.get(0) * 1, temp1.get(1) * 1, temp1.get(2) * 1);
+                    System.out.println(kaki);
+                }
+//            tangan
+//
+                for (Object y :  objects.get(1).getChildObject().get(0).getChildObject()) {
+                    tangan--;
+//                rotasi terhadap bumi
+                    List<Float> temp1 = new ArrayList<>(objects.get(1).getChildObject().get(0).getChildObject().get(0).getCenterPoint());
+                    y.translateObject(temp1.get(0) * -1, temp1.get(1) * -1, temp1.get(2) * -1);
+                    if (tempo==30){
+                        tangan=0;
+                        tempo=0;
+                    }
+                    if(tangan <= -30){
+//                    jalan+=0.001;
+                        {y.rotateObjectAnimate((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f,camera,projection);}
+//                    objects.get(0).translateObject(0f,0f,jalan);
+                        tempo++;
+                    }
+                    else
+//                jalan+=0.001;
+                    {y.rotateObjectAnimate((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f,camera,projection);}
+                    y.translateObject(temp1.get(0) * 1, temp1.get(1) * 1, temp1.get(2) * 1);
+                    System.out.println(kaki);
+                }
+                for (Object y :  objects.get(1).getChildObject().get(1).getChildObject()) {
+                    tangan--;
+//                rotasi terhadap bumi
+                    List<Float> temp1 = new ArrayList<>(objects.get(1).getChildObject().get(0).getChildObject().get(0).getCenterPoint());
+                    y.translateObject(temp1.get(0) * -1, temp1.get(1) * -1, temp1.get(2) * -1);
+                    if (tempo==30){
+                        tangan=0;
+                        tempo=0;
+                    }
+                    if(tangan <= -30){
+//                    jalan+=0.001;
+                        {y.rotateObjectAnimate((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f,camera,projection);}
+//                    objects.get(0).translateObject(0f,0f,jalan);
+                        tempo++;
+                    }
+                    else
+//                jalan+=0.001;
+                    {y.rotateObjectAnimate((float) Math.toRadians(7f), 1.0f, 0.0f, 0.0f,camera,projection);}
+                    y.translateObject(temp1.get(0) * 1, temp1.get(1) * 1, temp1.get(2) * 1);
+                    System.out.println(kaki);
+                }
+            }
+
         }
 //        Run
         if (window.isKeyPressed(GLFW_KEY_X)) {
-//            List<Float> temp = new ArrayList<>(objects.get(0).getCenterPoint());
-//            objects.get(0).getChildObject().get(2).rotateObject(0.1f, 1f, 0f, 0.0f, 1f);
-//
-//            objects.get(0).getChildObject().get(3).translateObject(0f,0f,0f);
-//            objects.get(0).getChildObject().get(3).rotateObject(2f, 1f, 0f, 0f,20f);
-//            objects.get(0).getChildObject().get(3).translateObject(0f,0f,0f);
-//
-//            objects.get(0).getChildObject().get(4).translateObject(0f,0f,0f);
-//            objects.get(0).getChildObject().get(4).rotateObject(2f, -1f, 0f, 0f,20f);
-//            objects.get(0).getChildObject().get(4).translateObject(0f,0f,0f);
-//
-//            objects.get(0).getChildObject().get(5).translateObject(0f,0f,0f);
-//            //objects.get(0).getChildObject().get(5).rotateObject(2f, -1f, 0f, 0f,20f);
-//            objects.get(0).getChildObject().get(5).rotateObject((float)Math.toRadians(3.5), -1f, 0f, 0f);
-//            objects.get(0).getChildObject().get(5).rotateObject((float)Math.toRadians(0.17), 0f, 6f, 0f);
-//            objects.get(0).getChildObject().get(5).translateObject(0f,0f,0f);
-//
-//            objects.get(0).getChildObject().get(6).translateObject(0f,0f,0f);
-//            //objects.get(0).getChildObject().get(5).rotateObject(2f, -1f, 0f, 0f,20f);
-//            objects.get(0).getChildObject().get(6).rotateObject((float)Math.toRadians(4), 1f, 0f, 0f);
-//            objects.get(0).getChildObject().get(6).rotateObject((float)Math.toRadians(0.2), 0f, 6f, 0f);
-//            objects.get(0).getChildObject().get(6).translateObject(0f,0f,0f);
         }
 
         if (window.isKeyPressed(GLFW_KEY_C)){
@@ -828,20 +925,36 @@ public class Palmon {
             hold = false;
         }
         if (window.isKeyPressed(GLFW_KEY_Q)) {
-            objects.get(0).rotateObject((float)Math.toRadians(0.1), 0.0f, 7f, 0.0f);
-//            List<Float> temp = new ArrayList<>(objects.get(0).getCenterPoint());
-//            objects.get(0).translateObject(-temp.get(0), -temp.get(1), -temp.get(2));
-//            objects.get(0).rotateObjectAnimate((float) Math.toRadians(1), 0f, 1f, 0f);
-//            objects.get(0).translateObject(temp.get(0), temp.get(1), temp.get(2));
+
+            if(!evolveFinish) {
+                List<Float> temp = new ArrayList<>(objects.get(0).getCenterPoint());
+                objects.get(0).translateObject(-temp.get(0), -temp.get(1), -temp.get(2));
+                objects.get(0).rotateObjectAnimate((float) Math.toRadians(5), 0.0f, 1f, 0.0f, camera, projection);
+                objects.get(0).translateObject(temp.get(0), temp.get(1), temp.get(2));
+            }
+            else{
+                List<Float> temp = new ArrayList<>(objects.get(0).getCenterPoint());
+                objects.get(1).translateObject(-temp.get(0), -temp.get(1), -temp.get(2));
+                objects.get(1).rotateObjectAnimate((float) Math.toRadians(5), 0.0f, 1f, 0.0f, camera, projection);
+                objects.get(1).translateObject(temp.get(0), temp.get(1), temp.get(2));
+            }
 
         }
 
         if (window.isKeyPressed(GLFW_KEY_W)) {
-            objects.get(0).rotateObject((float)Math.toRadians(0.1), 0.0f, -7f, 0.0f);
-//            Vector3f tempCenterPoint = objects.get(0).updateCenterPointObject();
-//            objects.get(0).translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
-//            objects.get(0).rotateObjectAnimate((float) Math.toRadians(0.1), 0f, -1f, 0f);
-//            objects.get(0).translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+            if(!evolveFinish) {
+                List<Float> temp = new ArrayList<>(objects.get(0).getCenterPoint());
+                objects.get(0).translateObject(-temp.get(0), -temp.get(1), -temp.get(2));
+                objects.get(0).rotateObjectAnimate((float) Math.toRadians(-5), 0.0f, 1f, 0.0f, camera, projection);
+                objects.get(0).translateObject(temp.get(0), temp.get(1), temp.get(2));
+            }
+            else{
+                List<Float> temp = new ArrayList<>(objects.get(0).getCenterPoint());
+                objects.get(1).translateObject(-temp.get(0), -temp.get(1), -temp.get(2));
+                objects.get(1).rotateObjectAnimate((float) Math.toRadians(-5), 0.0f, 1f, 0.0f, camera, projection);
+                objects.get(1).translateObject(temp.get(0), temp.get(1), temp.get(2));
+            }
+
         }
 
         if (window.isKeyPressed(GLFW_KEY_LEFT)) {
@@ -889,7 +1002,7 @@ public class Palmon {
             inc = 5;
             List<Float> temp1 = new ArrayList<>(objects.get(0).getCenterPoint());
             objects.get(0).translateObject(-temp1.get(0), -temp1.get(1), -temp1.get(2));
-            objects.get(0).rotateObject((float)Math.toRadians(inc), 0f, 1f, 0f);
+            objects.get(0).rotateObjectAnimate((float)Math.toRadians(inc), 0f, 1f, 0f,camera,projection);
             objects.get(0).translateObject(temp1.get(0), temp1.get(1), temp1.get(2));
             timer += inc;
             if(timer > 715) {
@@ -909,12 +1022,12 @@ public class Palmon {
 
             List<Float> temp1 = new ArrayList<>(objects.get(0).getChildObject().get(5).getCenterPoint());
             objects.get(0).getChildObject().get(5).translateObject(-temp1.get(0), -temp1.get(1), -temp1.get(2));
-            objects.get(0).getChildObject().get(5).rotateObject((float)Math.toRadians(4), 0f, 0f, 1f);
+            objects.get(0).getChildObject().get(5).rotateObjectAnimate((float)Math.toRadians(4), 0f, 0f, 1f,camera,projection);
             objects.get(0).getChildObject().get(5).translateObject(temp1.get(0), temp1.get(1), temp1.get(2));
 
             List<Float> temp2 = new ArrayList<>(objects.get(0).getChildObject().get(6).getCenterPoint());
             objects.get(0).getChildObject().get(6).translateObject(-temp2.get(0), -temp2.get(1), -temp2.get(2));
-            objects.get(0).getChildObject().get(6).rotateObject((float)Math.toRadians(4), 0f, 0f, -1f);
+            objects.get(0).getChildObject().get(6).rotateObjectAnimate((float)Math.toRadians(-4), 0f, 0f, 1f,camera,projection);
             objects.get(0).getChildObject().get(6).translateObject(temp2.get(0), temp2.get(1), temp2.get(2));
 
             if(objects.get(0).getCenterPoint().get(1) >= 0.2f){
@@ -932,22 +1045,22 @@ public class Palmon {
 
             List<Float> temp1 = new ArrayList<>(objects.get(0).getChildObject().get(5).getCenterPoint());
             objects.get(0).getChildObject().get(5).translateObject(-temp1.get(0), -temp1.get(1), -temp1.get(2));
-            objects.get(0).getChildObject().get(5).rotateObject((float)Math.toRadians(4), 0f, 0f, -1f);
+            objects.get(0).getChildObject().get(5).rotateObjectAnimate((float)Math.toRadians(-4), 0f, 0f, 1f,camera,projection);
             objects.get(0).getChildObject().get(5).translateObject(temp1.get(0), temp1.get(1), temp1.get(2));
 
             List<Float> temp2 = new ArrayList<>(objects.get(0).getChildObject().get(6).getCenterPoint());
             objects.get(0).getChildObject().get(6).translateObject(-temp2.get(0), -temp2.get(1), -temp2.get(2));
-            objects.get(0).getChildObject().get(6).rotateObject((float)Math.toRadians(4), 0f, 0f, 1f);
+            objects.get(0).getChildObject().get(6).rotateObjectAnimate((float)Math.toRadians(4), 0f, 0f, 1f,camera,projection);
             objects.get(0).getChildObject().get(6).translateObject(temp2.get(0), temp2.get(1), temp2.get(2));
 
             List<Float> temp3 = new ArrayList<>(objects.get(0).getChildObject().get(3).getCenterPoint());
             objects.get(0).getChildObject().get(3).translateObject(temp3.get(0)*-1,temp3.get(1)*-1,temp3.get(2)*-1);
-            objects.get(0).getChildObject().get(3).rotateObject((float)Math.toRadians(1.5), 1f, 0f, 0f);
+            objects.get(0).getChildObject().get(3).rotateObjectAnimate((float)Math.toRadians(1.5), 1f, 0f, 0f,camera,projection);
             objects.get(0).getChildObject().get(3).translateObject(temp3.get(0)*1,temp3.get(1)*1,temp3.get(2)*1);
 
             List<Float> temp4 = new ArrayList<>(objects.get(0).getChildObject().get(4).getCenterPoint());
             objects.get(0).getChildObject().get(4).translateObject(temp4.get(0)*-1,temp4.get(1)*-1,temp4.get(2)*-1);
-            objects.get(0).getChildObject().get(4).rotateObject((float)Math.toRadians(1.5), -1f, 0f, 0f);
+            objects.get(0).getChildObject().get(4).rotateObjectAnimate((float)Math.toRadians(-1.5), 1f, 0f, 0f,camera,projection);
             objects.get(0).getChildObject().get(4).translateObject(temp4.get(0)*1,temp4.get(1)*1,temp4.get(2)*1);
 
             if(objects.get(0).getCenterPoint().get(1) <= -0.05f){

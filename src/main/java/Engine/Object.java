@@ -265,9 +265,6 @@ public class Object extends ShaderProgram {
             rotateObject(-rotation.x, 1f, 0f, 0f);
 
             model = new Matrix4f().rotate(degree, offsetx, offsety, offsetz).mul(new Matrix4f(model));
-            translateObject(0f, 0f, 2f);
-            draw(camera, projection);
-            translateObject(0f, 0f, -2f);
             for (Object child : childObject) {
                 child.rotateObjectAnimateUtil(degree, offsetx, offsety, offsetz);
             }
@@ -279,8 +276,6 @@ public class Object extends ShaderProgram {
         }
 
         if (offsety == 1f) {
-
-
             rotateObject(-rotation.z, 0f, 0f, 1f);
             rotateObject(-rotation.x, 1f, 0f, 0f);
             rotateObject(-rotation.y, 0f, 1f, 0f);
