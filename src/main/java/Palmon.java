@@ -784,6 +784,7 @@ public class Palmon {
         if (window.isKeyPressed(GLFW_KEY_Z)) {
 
             if(!evolveFinish) {
+                objects.get(0).translateObjectAnimate(0.0f,0f,0.05f);
                 if (SwitchDegree == 1) {
                     timer += 1.5;
                     List<Float> temp = new ArrayList<>(objects.get(0).getChildObject().get(3).getCenterPoint());
@@ -818,6 +819,7 @@ public class Palmon {
                 }
             }
             else{
+                objects.get(1).translateObject(0.05f,0f,0f);
                 for (Object y :  objects.get(1).getChildObject().get(5).getChildObject()) {
                     kaki--;
 //                rotasi terhadap bumi
@@ -829,7 +831,7 @@ public class Palmon {
                     }
                     if(kaki <= -10){
 //                    jalan+=0.001;
-                        {y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);}
+                        {y.rotateObjectAnimate((float) Math.toRadians(-7f), 1.0f, 0.0f, 0.0f,camera,projection);}
 //                    objects.get(0).translateObject(0f,0f,jalan);
                         temp++;
                     }
@@ -856,7 +858,7 @@ public class Palmon {
                     }
                     else
 //                jalan+=0.001;
-                    {y.rotateObject((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f);}
+                    {y.rotateObjectAnimate((float) Math.toRadians(-7f), 1.0f, 0.0f, 0.0f,camera,projection);}
                     y.translateObject(temp1.get(0) * 1, temp1.get(1) * 1, temp1.get(2) * 1);
                     System.out.println(kaki);
                 }
@@ -879,7 +881,7 @@ public class Palmon {
                     }
                     else
 //                jalan+=0.001;
-                    {y.rotateObjectAnimate((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f,camera,projection);}
+                    {y.rotateObjectAnimate((float) Math.toRadians(-7f), 1.0f, 0.0f, 0.0f,camera,projection);}
                     y.translateObject(temp1.get(0) * 1, temp1.get(1) * 1, temp1.get(2) * 1);
                     System.out.println(kaki);
                 }
@@ -894,7 +896,7 @@ public class Palmon {
                     }
                     if(tangan <= -30){
 //                    jalan+=0.001;
-                        {y.rotateObjectAnimate((float) Math.toRadians(7f), -1.0f, 0.0f, 0.0f,camera,projection);}
+                        {y.rotateObjectAnimate((float) Math.toRadians(-7f), 1.0f, 0.0f, 0.0f,camera,projection);}
 //                    objects.get(0).translateObject(0f,0f,jalan);
                         tempo++;
                     }
@@ -933,7 +935,7 @@ public class Palmon {
                 objects.get(0).translateObject(temp.get(0), temp.get(1), temp.get(2));
             }
             else{
-                List<Float> temp = new ArrayList<>(objects.get(0).getCenterPoint());
+                List<Float> temp = new ArrayList<>(objects.get(1).getCenterPoint());
                 objects.get(1).translateObject(-temp.get(0), -temp.get(1), -temp.get(2));
                 objects.get(1).rotateObjectAnimate((float) Math.toRadians(5), 0.0f, 1f, 0.0f, camera, projection);
                 objects.get(1).translateObject(temp.get(0), temp.get(1), temp.get(2));
@@ -949,7 +951,7 @@ public class Palmon {
                 objects.get(0).translateObject(temp.get(0), temp.get(1), temp.get(2));
             }
             else{
-                List<Float> temp = new ArrayList<>(objects.get(0).getCenterPoint());
+                List<Float> temp = new ArrayList<>(objects.get(1).getCenterPoint());
                 objects.get(1).translateObject(-temp.get(0), -temp.get(1), -temp.get(2));
                 objects.get(1).rotateObjectAnimate((float) Math.toRadians(-5), 0.0f, 1f, 0.0f, camera, projection);
                 objects.get(1).translateObject(temp.get(0), temp.get(1), temp.get(2));
@@ -969,6 +971,7 @@ public class Palmon {
         if (window.isKeyPressed(GLFW_KEY_DOWN)) {
             objects.get(0).translateObject(0f,-0.01f,0f);
         }
+
         if(window.isKeyPressed(GLFW_KEY_LEFT_SHIFT))
         {
             camera.moveForward(0.02f);
@@ -1089,7 +1092,7 @@ public class Palmon {
             objects.get(1).scaleObject(1.25f, 1.25f, 1.25f);
             objects.get(1).translateObject(0f,0.005f,0f);
             objects.get(1).translateObject(-temp1.get(0), -temp1.get(1), -temp1.get(2));
-            objects.get(1).rotateObject((float) Math.toRadians(60f), 0.0f, 1.0f, 0.0f);
+            objects.get(1).rotateObjectAnimate((float) Math.toRadians(60f), 0.0f, 1.0f, 0.0f,camera,projection);
             objects.get(1).translateObject(temp1.get(0), temp1.get(1), temp1.get(2));
             if(timer < 0){
                 action = 5;
@@ -1100,7 +1103,7 @@ public class Palmon {
         if(action == 5){
             List<Float> temp1 = new ArrayList<>(objects.get(1).getCenterPoint());
             objects.get(1).translateObject(-temp1.get(0), -temp1.get(1), -temp1.get(2));
-            objects.get(1).rotateObject((float) Math.toRadians(20f), 0.0f, 1.0f, 0.0f);
+            objects.get(1).rotateObjectAnimate((float) Math.toRadians(20f), 0.0f, 1.0f, 0.0f,camera,projection);
             objects.get(1).translateObject(temp1.get(0), temp1.get(1), temp1.get(2));
             timer -= 0.1;
             if(timer < 0) {

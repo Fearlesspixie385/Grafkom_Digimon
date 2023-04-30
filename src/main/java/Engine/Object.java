@@ -243,8 +243,6 @@ public class Object extends ShaderProgram {
         pos.x += offsetx;
         pos.y += offsety;
         pos.z += offsetz;
-
-
     }
 
     public void rotateObject(Float degree, Float offsetx, Float offsety, Float offsetz) {
