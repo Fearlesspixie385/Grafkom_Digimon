@@ -6,9 +6,9 @@ Compiler:
 
 c14210084 - Juven Axel W.
 
-c14210144 - Billy Emmanoel
+c14210144 - Billy Emmanoel 
 
-c14210184 - Mouritus Nugraha
+c14210184 - Mouritus Huangtara M.
 
 
 Laporan Desain
