@@ -28,7 +28,6 @@ public class Object extends ShaderProgram {
     Vector3f pos = new Vector3f();
     Vector3f rotation = new Vector3f();
     Vector3f rotationWithoutParent = new Vector3f();
-    Vector3f model1 = new Vector3f();
 
     float degreeInc;
     int Switch;
@@ -255,18 +254,20 @@ public class Object extends ShaderProgram {
         }
     }
 
-    public void rotateObjectAnimate(Float degree, Float offsetx, Float offsety, Float offsetz, Camera camera, Projection projection) {
+    public Vector3f getRotation() {
+        return rotation;
+    }
 
+    public void rotateObjectAnimate(Float degree, Float offsetx, Float offsety, Float offsetz, Camera camera, Projection projection) {
         if (offsetx == 1f) {
-            if (offsetx >= 360f) {
-                offsetx -= 360;
-            }
             rotateObject(-rotation.z, 0f, 0f, 1f);
             rotateObject(-rotation.y, 0f, 1f, 0f);
             rotateObject(-rotation.x, 1f, 0f, 0f);
 
             model = new Matrix4f().rotate(degree, offsetx, offsety, offsetz).mul(new Matrix4f(model));
-
+            translateObject(0f, 0f, 2f);
+            draw(camera, projection);
+            translateObject(0f, 0f, -2f);
             for (Object child : childObject) {
                 child.rotateObjectAnimateUtil(degree, offsetx, offsety, offsetz);
             }
@@ -279,14 +280,11 @@ public class Object extends ShaderProgram {
 
         if (offsety == 1f) {
 
-            if (offsety >= 360f) {
-                offsety -= 360;
-            }
+
             rotateObject(-rotation.z, 0f, 0f, 1f);
             rotateObject(-rotation.x, 1f, 0f, 0f);
             rotateObject(-rotation.y, 0f, 1f, 0f);
             model = new Matrix4f().rotate(degree, offsetx, offsety, offsetz).mul(new Matrix4f(model));
-
             for (Object child : childObject) {
                 child.rotateObjectAnimateUtil(degree, offsetx, offsety, offsetz);
             }
@@ -298,9 +296,7 @@ public class Object extends ShaderProgram {
         }
 
         if (offsetz == 1f) {
-            if (offsetz >= 360f) {
-                offsetz -= 360;
-            }
+
             rotateObject(-rotation.y, 0f, 1f, 0f);
             rotateObject(-rotation.x, 1f, 0f, 0f);
             rotateObject(-rotation.z, 0f, 0f, 1f);
@@ -324,24 +320,14 @@ public class Object extends ShaderProgram {
         model = new Matrix4f().rotate(degree, offsetx, offsety, offsetz).mul(new Matrix4f(model));
 
         if (offsetx == 1f) {
-            if (offsetx >= 360f) {
-                offsetx -= 360;
-            }
             rotation.x += degree;
         }
 
         if (offsety == 1f) {
-
-            if (offsety >= 360f) {
-                offsety -= 360;
-            }
             rotation.y += degree;
         }
 
         if (offsetz == 1f) {
-            if (offsetz >= 360f) {
-                offsetz -= 360;
-            }
             rotation.z += degree;
         }
         for (Object child : childObject) {
@@ -349,13 +335,113 @@ public class Object extends ShaderProgram {
         }
     }
 
-    public void resetPos() {
+    public void resetRotateUtilParent(Vector3f rotateParent){
+        rotation.x += -rotateParent.x;
+        rotation.y += -rotateParent.y;
+        rotation.z += -rotateParent.z;
+        for (Object children : getChildObject()) {
+            children.resetRotateUtilParent(rotateParent);
+        }
+    }
+
+    public void resetRotate() {
         Vector3f tempCenterPoint = updateCenterPointObject();
         translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
         rotateObject(-rotationWithoutParent.x, 1f, 0f, 0f);
         rotateObject(-rotationWithoutParent.y, 0f, 1f, 0f);
         rotateObject(-rotationWithoutParent.z, 0f, 0f, 1f);
         translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+        resetRotateUtilParent(rotationWithoutParent);
+
+        rotationWithoutParent = new Vector3f();
+    }
+
+    public void resetRotate(int i) {
+        Vector3f tempCenterPoint = updateCenterPointObject();
+        translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+        rotation.x += -rotationWithoutParent.x;
+        rotation.y += -rotationWithoutParent.y;
+        rotation.z += -rotationWithoutParent.z;
+        resetRotateUtilParent(rotationWithoutParent);
+        switch (i) {
+            case 1:
+                rotateObject(-rotationWithoutParent.x, 1f, 0f, 0f);
+                rotationWithoutParent.x = 0;
+                rotation.x = 0;
+                break;
+            case 2:
+                rotateObject(-rotationWithoutParent.y, 0f, 1f, 0f);
+                rotationWithoutParent.y = 0;
+                rotation.y = 0;
+                break;
+            case 3:
+                rotateObject(-rotationWithoutParent.z, 0f, 0f, 1f);
+                rotationWithoutParent.z = 0;
+                rotation.z = 0;
+                break;
+        }
+        translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+
+    }
+
+    public void resetRotateChildren() {
+        Vector3f tempCenterPoint = updateCenterPointObject();
+        translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+        rotateObject(-rotationWithoutParent.x, 1f, 0f, 0f);
+        rotateObject(-rotationWithoutParent.y, 0f, 1f, 0f);
+        rotateObject(-rotationWithoutParent.z, 0f, 0f, 1f);
+        translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+        resetRotateUtilParent(rotationWithoutParent);
+        rotation = new Vector3f();
+        rotationWithoutParent = new Vector3f();
+
+        for (Object child : childObject) {
+            child.resetAllChildren();
+        }
+    }
+
+    public void resetRotateChildren(int i) {
+        Vector3f tempCenterPoint = updateCenterPointObject();
+        translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+        rotation.x += -rotationWithoutParent.x;
+        rotation.y += -rotationWithoutParent.y;
+        rotation.z += -rotationWithoutParent.z;
+        resetRotateUtilParent(rotationWithoutParent);
+        switch (i) {
+            case 1:
+                rotateObject(-rotationWithoutParent.x, 1f, 0f, 0f);
+                rotationWithoutParent.x = 0;
+                rotation.x = 0;
+                break;
+            case 2:
+                rotateObject(-rotationWithoutParent.y, 0f, 1f, 0f);
+                rotationWithoutParent.y = 0;
+                rotation.y = 0;
+                break;
+            case 3:
+                rotateObject(-rotationWithoutParent.z, 0f, 0f, 1f);
+                rotationWithoutParent.z = 0;
+                rotation.z = 0;
+                break;
+        }
+        translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+
+        for (Object child : childObject) {
+            child.resetAllChildren(i);
+        }
+    }
+
+    public void resetALl() {
+        Vector3f tempCenterPoint = updateCenterPointObject();
+        translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+        rotateObject(-rotationWithoutParent.x, 1f, 0f, 0f);
+        rotateObject(-rotationWithoutParent.y, 0f, 1f, 0f);
+        rotateObject(-rotationWithoutParent.z, 0f, 0f, 1f);
+        translateObject(tempCenterPoint.x * 1, tempCenterPoint.y * 1, tempCenterPoint.z * 1);
+        resetRotateUtilParent(rotationWithoutParent);
+        rotation.x += -rotationWithoutParent.x;
+        rotation.y += -rotationWithoutParent.y;
+        rotation.z += -rotationWithoutParent.z;
         rotationWithoutParent = new Vector3f();
         if (pos.x != 0 || pos.y != 0 || pos.z != 0) {
             translateObject(-pos.x, -pos.y, -pos.z);
@@ -364,9 +450,13 @@ public class Object extends ShaderProgram {
 
     }
 
-    public void resetPos(int i) {
+    public void resetALl(int i) {
         Vector3f tempCenterPoint = updateCenterPointObject();
         translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
+        rotation.x += -rotationWithoutParent.x;
+        rotation.y += -rotationWithoutParent.y;
+        rotation.z += -rotationWithoutParent.z;
+        resetRotateUtilParent(rotationWithoutParent);
         switch (i) {
             case 1:
                 rotateObject(-rotationWithoutParent.x, 1f, 0f, 0f);
@@ -393,7 +483,13 @@ public class Object extends ShaderProgram {
 
     }
 
-    public void resetPosChildren() {
+    public void resetOnlyChildren() {
+        for (Object child : childObject) {
+            child.resetAllChildren();
+        }
+    }
+
+    public void resetAllChildren() {
         Vector3f tempCenterPoint = updateCenterPointObject();
         translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
         rotateObject(-rotationWithoutParent.x, 1f, 0f, 0f);
@@ -408,11 +504,11 @@ public class Object extends ShaderProgram {
         pos = new Vector3f();
 
         for (Object child : childObject) {
-            child.resetPosChildren();
+            child.resetAllChildren();
         }
     }
 
-    public void resetPosChildren(int i) {
+    public void resetAllChildren(int i) {
         Vector3f tempCenterPoint = updateCenterPointObject();
         translateObject(tempCenterPoint.x * -1, tempCenterPoint.y * -1, tempCenterPoint.z * -1);
         switch (i) {
@@ -440,7 +536,7 @@ public class Object extends ShaderProgram {
         pos = new Vector3f();
 
         for (Object child : childObject) {
-            child.resetPosChildren(i);
+            child.resetAllChildren(i);
         }
     }
 
