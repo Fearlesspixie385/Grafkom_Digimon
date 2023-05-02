@@ -8,7 +8,7 @@ c14210084 - Juven Axel W.
 
 c14210144 - Billy Emmanoel 
 
-c14210184 - Mouritus Huangtara M.
+c14210182 - Mouritus Huangtara M.
 
 
 Laporan Desain
